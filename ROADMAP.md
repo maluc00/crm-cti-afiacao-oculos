@@ -26,13 +26,13 @@ O **CTI Pro CRM** e construido em 6 fases incrementais sobre o esquema unico `da
 
 ---
 
-## FASE 3: Bancada Tecnica (Kanban SLA), Ficha BOM & Estoque com Custo Medio Ponderado
-- **Escopo:**
-  - Quadro Kanban da Bancada (`FILA`, `BANCADA`, `AGUARDANDO_PECA`, `PRONTO`) com cronometros de SLA, prioridade `URGENTE` e filtros por dominio.
-  - Baixa automatica da Ficha Tecnica BOM (`ficha_tecnica_bom`) ao concluir servico ou iniciar execucao, com registro imutavel em `estoque_movimentacoes`.
-  - Modulo de Compras e Entrada de Nota recalculando `custo_medio_ponderado` (CMP) em tempo real e gerando alertas de estoque minimo.
-  - Controle de lotes (`concluido_lote` por item) e registro fotografico `DEPOIS` antes da entrega.
-- **Criterio de Aceite:** Rastreabilidade integral de custo de insumos por OS e testes automatizados da Fase 3.
+## FASE 3: OS Elastica (Express/Completo/Lote), Bancada Viva (FSM), WebP & Impressao Termica [CONCLUIDA]
+- **Escopo entregue:**
+  - Modal de Check-in de OS (`F4`) com cabecalho slim de 38px (`#OS-YYYY-XXXX`), alternancia de dominio (`HYBRID`), seletor `[ Express | Completo | Lote ]` e alerta automatico de garantia (< 90 dias).
+  - Modo Express (Spotlight 1 linha com Top 10, multiplicador `Nx`, `+ Novo Item Inline`, regua financeira com `%`/`R$`, `Cortesia`, `Sinal`/`Quitado` e calculadora de troco), Modo Completo (pericia tecnica com auto-aprendizado, `ESTADO_LENTE`, desmembramento unitario de lote `0/N`) e Modo Lote Rapido em planilha atomica.
+  - Bancada Viva em 3 visoes (`Kanban`, `Lista de Alta Densidade` e `Stepper Tatil`), aba dedicada de Estacionamento Tecnico (`AGUARDANDO_PECA` + `Peca Chegou`), timestamps passivos silenciosos, Split Payment bloqueante (`409 QUITACAO_OBRIGATORIA`) na entrega e cancelamento com motivo obrigatorio + estorno BOM e `caixa_ledger`.
+  - Fotos ultraleves WebP comprimidas no cliente (`maxDim 800px`, qualidade `0.75`) salvas em `data/media/YYYY-MM/`, Lightbox `1x/2x/3x`, Impressao Termica (`80mm`, `58mm`, `50x30mm`, `A4`) com QR PIX EMVCo CRC16 + QR Tracking e Global Spotlight (`Ctrl+K`) integrado.
+- **Criterio de Aceite:** 14/14 testes automatizados aprovados (`phase1`, `phase2`, `phase3`), zero emojis e teto de 600 linhas cumprido.
 
 ---
 

@@ -122,3 +122,61 @@
 | `src/services/settings-service.js` | 395 | <= 600 |
 | `src/utils/phone.js` | 106 | <= 600 |
 | `tests/phase2.test.js` | 370 | <= 600 |
+
+---
+
+## FASE 3 - OS Elastica (Express/Completo/Lote), Bancada Viva, WebP & Impressao Termica
+- **Data:** 2026-11-17
+- **Entregas Concluidas:**
+  - **PIX EMVCo & QR Codes (`src/utils/pix-brcode.js`):** Geracao deterministica de payload PIX Copia-e-Cola com CRC16-CCITT (`0x1021`) e SVG vetorial via `qrcode` para impressao termica e link de acompanhamento.
+  - **Servicos & Rotas de OS (`src/services/os-service.js`, `os-queries.js`, `os-fsm.js`, `os-bom-ledger.js`, `os-media-print.js`, `src/routes/os-routes.js`):**
+    - Check-in nos modos `EXPRESS`, `COMPLETO` e `LOTE_RAPIDO` atomico com baixa de estoque BOM/produtos e registro de entrada/quitacao/cortesia no `caixa_ledger`.
+    - Check automatico de garantia (< 90 dias), memoria com auto-aprendizado (`MATERIAL`, `LOCAL_AVARIA`, `INSTRUMENTO`, `CONDICAO`) e checklist unitario de lote (`concluido_lote` / `0..N`).
+    - FSM da Bancada Viva (`FILA` -> `BANCADA` <-> `AGUARDANDO_PECA` -> `PRONTO` -> `ENTREGUE` | `CANCELADA`) com timestamps silenciosos, bloqueio `409 QUITACAO_OBRIGATORIA` + Split Payment na entrega e estorno integral de BOM + `ESTORNO` em `caixa_ledger` ao cancelar.
+    - Armazenamento de fotos WebP em `data/media/YYYY-MM/` com serving estatico `/media` e metadados em `os_fotos`.
+  - **UI de Balcao, Bancada & Impressao (`public/js/modal-os-checkin.js`, `modal-os-modes.js`, `modals-bench.js`, `view-bench.js`, `webp-photo.js`, `thermal-printer.js`, `public/css/phase3.css`):**
+    - Modal `F4` com cabecalho slim de 38px, seletor de dominio (`HYBRID`), Spotlight de servicos/combos/produtos com multiplicador `Nx` e `+ Novo Item Inline`, regua financeira com troco rapido e compressor Canvas WebP (`maxDim 800px`, qualidade `0.75`) + Lightbox `1x/2x/3x`.
+    - Bancada com alternador `[ Kanban | Lista | Stepper ]`, aba dedicada de Estacionamento Tecnico com `Peca Chegou` em 1 clique, preview termico `80mm`/`58mm`/`50x30mm`/`A4` (com envelope tecnico + picote + canhoto + `ESTADO_LENTE` + QR PIX + QR OS) e Global Spotlight (`Ctrl+K`) consultando `/api/spotlight`.
+- **Verificacao Automatizada (`npm test`):**
+  - 14 testes totais (5 Fase 1 + 5 Fase 2 + 4 Fase 3) executados via `node --test`, 14 aprovados e 0 falhas.
+
+### Contagem de Linhas dos Novos/Principais Arquivos (Fase 3)
+
+| Arquivo | Linhas | Teto |
+| --- | ---: | ---: |
+| `public/js/modal-os-checkin.js` | 507 | <= 600 |
+| `public/js/modal-os-modes.js` | 418 | <= 600 |
+| `public/css/phase3.css` | 385 | <= 600 |
+| `src/services/os-service.js` | 376 | <= 600 |
+| `tests/phase3.test.js` | 328 | <= 600 |
+| `public/js/view-bench.js` | 316 | <= 600 |
+| `src/services/os-bom-ledger.js` | 313 | <= 600 |
+| `public/js/modals-bench.js` | 280 | <= 600 |
+| `src/services/os-queries.js` | 250 | <= 600 |
+| `src/routes/os-routes.js` | 183 | <= 600 |
+| `public/js/thermal-printer.js` | 178 | <= 600 |
+| `src/services/os-media-print.js` | 168 | <= 600 |
+| `src/services/os-fsm.js` | 164 | <= 600 |
+| `public/js/webp-photo.js` | 154 | <= 600 |
+| `src/utils/pix-brcode.js` | 94 | <= 600 |
+
+---
+
+## HOTFIX PRE-FASE 4 - POLIMENTO UTF-8, ROTEAMENTO DE VIEWS, ATALHO F2 & LAYOUT
+- **Data:** 2026-11-17
+- **Entregas Concluidas:**
+  1. **Roteamento Estrito & Isolamento de Views (`public/js/app.js`, `public/js/views-shell.js`, `view-bench.js`, `view-catalog.js`, `view-clients.js`):**
+     - Implementada limpeza imediata do viewport e controle anti-race condition (`routeRenderSeq` / `canCommit`) na troca de abas da Sidebar e atalhos.
+     - Removido vazamento da tabela de `Atendimento & OS` para `Caixa & Ledger` e `BI & Indicadores`, que agora renderizam paineis isolados de estado aguardando a Fase 4 (`caixa`) e Fase 5 (`bi`) via `renderUpcomingPhaseView`.
+     - Removida truncagem `.slice(0, 14)` na tabela de servicos de `Atendimento & Balcao Express` e filtrado o cliente avulso `+5500000000000` da listagem do CRM.
+  2. **Restauracao Completa UTF-8 (Portugues do Brasil):**
+     - Corrigida acentuacao e cedilha em `public/`, `src/`, `data/seed.sql`, `tests/phase1.test.js` e atualizado diretamente o banco `data/cti_oficina.db` (`configuracoes`, `parceiros_tecnicos`, `catalogo_itens`, `combos`, `memoria_atributos` e `whatsapp_templates`, preservando preferencias ativas e validado com `PRAGMA integrity_check = ok`).
+     - Adicionado helper `formatEnumLabel()` em `public/js/state-sync.js` para formatacao acentuada na UI sem alterar codigos internos/enums do banco.
+  3. **Limpeza de Botoes Redundantes & Atalho F2:**
+     - Removido `#sidebar-qr-btn` da Sidebar e `#view-open-qr` / `#view-go-settings` dos cabecalhos internos, mantendo apenas o botao `Celular LAN` na Topbar e o indicador `LAN Sincronizado` no rodape da Sidebar.
+     - Padronizado o atalho **`F2`** para abrir `Caixa & Ledger` na Sidebar, no HUD de rodape (`F9`), no listener global e no Spotlight (`Ctrl+K`), com `F6` removido.
+  4. **Layout, Respiro de Scroll & Icone Sincronizado ao Camaleao:**
+     - `public/css/design-tokens.css` e `public/css/shell.css`: alargada a Sidebar (`264px`), liberada quebra de linha em `.brand-slogan` para exibir `"Precisao Optica & Cutelaria"` sem reticencias, e aplicado `padding-bottom: calc(48px + var(--hud-height))` em desktop (`96px` no mobile).
+     - `public/js/icons.js`, `public/js/state-sync.js`, `src/services/settings-service.js` e `public/js/view-settings.js`: adicionado `getDefaultBrandSvgForMode(operationMode)` e botao `Automatico (Camaleao)`, permitindo `brand_icon_svg` vazio sincronizar automaticamente o logotipo ao modo (`OPTICAL_ONLY`, `CUTLERY_ONLY`, `HYBRID`).
+- **Verificacao Automatizada Pos-Hotfix (`npm test`):**
+  - 14/14 testes aprovados (`phase1.test.js` + `phase2.test.js` + `phase3.test.js`), 0 falhas, 0 emojis e todos os arquivos dentro do teto `<= 600` linhas (maior arquivo: `public/js/modal-os-checkin.js` com 507 linhas).

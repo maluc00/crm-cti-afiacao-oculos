@@ -1,7 +1,7 @@
 (function attachClientModals(global) {
   'use strict';
 
-  const { state, apiFetch, formatBrl, escapeHtml, showToast } = global.CTI_STORE;
+  const { state, apiFetch, formatBrl, formatEnumLabel, escapeHtml, showToast } = global.CTI_STORE;
   const { openModal, closeModal } = global.CTI_MODALS;
   const { icon } = global.CTI_ICONS;
 
@@ -24,7 +24,7 @@
     if ((digits.length === 11 || digits.length === 12) && digits.startsWith('0')) digits = digits.slice(1);
     if ((digits.length === 12 || digits.length === 13) && digits.startsWith('55')) return '+' + digits;
     if (digits.length === 10 || digits.length === 11) return '+55' + digits;
-    return 'Aguardando DDD+Numero';
+    return 'Aguardando DDD+Número';
   }
 
   function renderStarIcons(score, interactive = false) {
@@ -46,7 +46,7 @@
 
     const html = `
       <form id="client-elastic-form" class="field" style="gap:12px;" data-dirty-form="true">
-        <div class="eyebrow">Visao Compacta Balcao (5 segundos)</div>
+        <div class="eyebrow">Visão Compacta Balcão (5 segundos)</div>
         <div class="field-grid">
           <div class="field">
             <label for="cli-nome">Nome Completo *</label>
@@ -60,19 +60,19 @@
 
         <div class="field-grid">
           <div class="field">
-            <label for="cli-apelido">Apelido / Referencia</label>
-            <input class="input" id="cli-apelido" type="text" value="${escapeHtml(existing?.apelido_referencia || '')}" placeholder="Ex: Maria Manicure / Salao Centro">
+            <label for="cli-apelido">Apelido / Referência</label>
+            <input class="input" id="cli-apelido" type="text" value="${escapeHtml(existing?.apelido_referencia || '')}" placeholder="Ex: Maria Manicure / Salão Centro">
           </div>
           <div class="field">
-            <label for="cli-obs">Observacoes Tecnicas / Anatomicas</label>
-            <input class="input" id="cli-obs" type="text" value="${escapeHtml(existing?.observacoes_tecnicas || '')}" placeholder="Ex: Alergia a niquel / Prefere ajuste firme">
+            <label for="cli-obs">Observações Técnicas / Anatômicas</label>
+            <input class="input" id="cli-obs" type="text" value="${escapeHtml(existing?.observacoes_tecnicas || '')}" placeholder="Ex: Alergia a níquel / Prefere ajuste firme">
           </div>
         </div>
 
         <div>
           <button class="btn btn-sm" type="button" id="cli-toggle-expand">
             <span class="icon" data-icon="${expanded ? 'chevronUp' : 'chevronDown'}"></span>
-            <span>${expanded ? 'Ocultar Endereco & Dados Completos' : '+ Expandir Endereco & Dados Completos (1 Clique)'}</span>
+            <span>${expanded ? 'Ocultar Endereço & Dados Completos' : '+ Expandir Endereço & Dados Completos (1 Clique)'}</span>
           </button>
 
           <div class="address-collapse ${expanded ? '' : 'hidden'}" id="cli-expanded-box">
@@ -88,7 +88,7 @@
             </div>
             <div class="field-grid" style="margin-bottom:10px;">
               <div class="field">
-                <label for="cli-cep">CEP (busca automatica se online)</label>
+                <label for="cli-cep">CEP (busca automática se online)</label>
                 <div style="display:flex;gap:6px;">
                   <input class="input mono" id="cli-cep" type="text" value="${escapeHtml(existing?.cep || '')}" placeholder="00000-000">
                   <button class="btn btn-sm" type="button" id="cli-cep-btn">Buscar</button>
@@ -101,7 +101,7 @@
             </div>
             <div class="field-grid" style="margin-bottom:10px;">
               <div class="field">
-                <label for="cli-numero">Numero</label>
+                <label for="cli-numero">Número</label>
                 <input class="input" id="cli-numero" type="text" value="${escapeHtml(existing?.numero || '')}">
               </div>
               <div class="field">
@@ -130,12 +130,12 @@
 
         <div style="display:flex;justify-content:flex-end;gap:8px;">
           <button class="btn" type="button" id="cli-cancel">Cancelar</button>
-          <button class="btn btn-accent" type="submit">${isEdit ? 'Salvar Alteracoes' : 'Cadastrar Cliente'}</button>
+          <button class="btn btn-accent" type="submit">${isEdit ? 'Salvar Alterações' : 'Cadastrar Cliente'}</button>
         </div>
       </form>
     `;
 
-    openModal(isEdit ? 'Editar Ficha do Cliente' : 'Cadastro Rapido de Cliente', html, true);
+    openModal(isEdit ? 'Editar Ficha do Cliente' : 'Cadastro Rápido de Cliente', html, true);
     document.getElementById('cli-cancel').addEventListener('click', closeModal);
 
     const telEl = document.getElementById('cli-tel');
@@ -157,14 +157,14 @@
       expanded = !expanded;
       expBox.classList.toggle('hidden', !expanded);
       toggleBtn.querySelector('span:last-child').textContent = expanded
-        ? 'Ocultar Endereco & Dados Completos'
-        : '+ Expandir Endereco & Dados Completos (1 Clique)';
+        ? 'Ocultar Endereço & Dados Completos'
+        : '+ Expandir Endereço & Dados Completos (1 Clique)';
     });
 
     async function lookupCep() {
       const digits = document.getElementById('cli-cep').value.replace(/\D/g, '');
       if (digits.length !== 8) {
-        showToast('Informe um CEP com 8 digitos.', 'warn');
+        showToast('Informe um CEP com 8 dígitos.', 'warn');
         return;
       }
       const ctrl = new AbortController();
@@ -173,14 +173,14 @@
         const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`, { signal: ctrl.signal });
         const data = await res.json();
         if (data.erro) {
-          showToast('CEP nao encontrado. Preencha manualmente.', 'warn');
+          showToast('CEP não encontrado. Preencha manualmente.', 'warn');
           return;
         }
         document.getElementById('cli-logradouro').value = data.logradouro || '';
         document.getElementById('cli-bairro').value = data.bairro || '';
         document.getElementById('cli-cidade').value = data.localidade || '';
         document.getElementById('cli-uf').value = data.uf || '';
-        showToast('Endereco preenchido via CEP.', 'ok');
+        showToast('Endereço preenchido via CEP.', 'ok');
       } catch (_err) {
         showToast('Sem acesso ao ViaCEP offline. Preencha os campos manualmente.', 'info');
       } finally {
@@ -226,7 +226,7 @@
   }
 
   async function openClientDossierModal({ clientId, profileFlagsCatalog = [], onUpdated }) {
-    openModal('Prontuario Tecnico do Cliente', '<div class="eyebrow">Carregando prontuario e ledger...</div>', true);
+    openModal('Prontuário Técnico do Cliente', '<div class="eyebrow">Carregando prontuário e livro-razão...</div>', true);
     try {
       const dossier = await apiFetch(`/api/clientes/${clientId}/prontuario`);
       const { cliente, score_breakdown, top_servicos, garantias_ativas, historico_os } = dossier;
@@ -261,14 +261,14 @@
             <div class="kpi-hint">${score_breakdown.total_os} OSs | Ticket ${escapeHtml(formatBrl(score_breakdown.ticket_medio))}</div>
           </div>
           <div class="card kpi-card" style="padding:12px;">
-            <div class="eyebrow">Avaliacao (Auto: ${cliente.score_automatico}/5)</div>
+            <div class="eyebrow">Avaliação (Auto: ${cliente.score_automatico}/5)</div>
             <div style="margin-top:8px;display:flex;align-items:center;gap:8px;" id="dos-stars-wrap">
               ${renderStarIcons(cliente.score_efetivo, true)}
             </div>
             <div class="kpi-hint">
               ${cliente.score_manual !== null
                 ? `Manual (${cliente.score_manual}/5) <button class="btn-ghost" type="button" id="dos-reset-score" style="text-decoration:underline;cursor:pointer;font-size:11px;">Restaurar Auto</button>`
-                : 'Calculo Automatico Ativo'}
+                : 'Cálculo Automático Ativo'}
             </div>
           </div>
           <div class="card kpi-card" style="padding:12px;">
@@ -292,9 +292,9 @@
 
         <div class="grid-2" style="margin-bottom:14px;">
           <div class="card panel" style="padding:12px;">
-            <div class="eyebrow" style="margin-bottom:6px;">Top 3 Servicos Realizados</div>
+            <div class="eyebrow" style="margin-bottom:6px;">Top 3 Serviços Realizados</div>
             ${top_servicos.length === 0
-              ? '<div class="eyebrow">Sem servicos executados ainda.</div>'
+              ? '<div class="eyebrow">Sem serviços executados ainda.</div>'
               : top_servicos.map((s) => `
                   <div class="switch-row" style="margin-bottom:6px;padding:8px 10px;">
                     <span><strong>${escapeHtml(s.descricao)}</strong> (${s.total_execucoes}x)</span>
@@ -319,18 +319,18 @@
         </div>
 
         <div>
-          <div class="eyebrow" style="margin-bottom:6px;">Historico de Ordens de Servico (${historico_os.length})</div>
+          <div class="eyebrow" style="margin-bottom:6px;">Histórico de Ordens de Serviço (${historico_os.length})</div>
           <div class="table-wrap">
             <table class="data-table">
-              <thead><tr><th>Codigo</th><th>Dominio</th><th>Status</th><th>Peca / Material</th><th class="num">Total</th></tr></thead>
+              <thead><tr><th>Código</th><th>Domínio</th><th>Status</th><th>Peça / Material</th><th class="num">Total</th></tr></thead>
               <tbody>
                 ${historico_os.length === 0
                   ? '<tr><td colspan="5" style="color:var(--text-secondary);">Nenhuma OS registrada para este cliente.</td></tr>'
                   : historico_os.map((os) => `
                       <tr>
                         <td class="mono">${escapeHtml(os.codigo_os)}</td>
-                        <td><span class="badge">${escapeHtml(os.dominio)}</span></td>
-                        <td><span class="badge badge-accent">${escapeHtml(os.status)}</span></td>
+                        <td><span class="badge">${escapeHtml(formatEnumLabel(os.dominio))}</span></td>
+                        <td><span class="badge badge-accent">${escapeHtml(formatEnumLabel(os.status))}</span></td>
                         <td>${escapeHtml(os.marca_modelo || os.material_peca || '-')}</td>
                         <td class="num">${escapeHtml(formatBrl(os.valor_total))}</td>
                       </tr>
@@ -341,7 +341,7 @@
         </div>
       `;
 
-      openModal(`Prontuario: ${cliente.nome}`, html, true);
+      openModal(`Prontuário: ${cliente.nome}`, html, true);
 
       const applyEval = async (patch) => {
         await apiFetch(`/api/clientes/${cliente.id}/avaliacao`, {
@@ -405,7 +405,7 @@
         global.CTI_APP.navigate('atendimento');
       });
     } catch (err) {
-      openModal('Prontuario do Cliente', `<div class="eyebrow" style="color:var(--status-danger);">${escapeHtml(err.message)}</div>`);
+      openModal('Prontuário do Cliente', `<div class="eyebrow" style="color:var(--status-danger);">${escapeHtml(err.message)}</div>`);
     }
   }
 

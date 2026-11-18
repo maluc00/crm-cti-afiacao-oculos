@@ -8,6 +8,7 @@ const { createSyncHub } = require('./src/ws/sync-hub');
 const { createSystemRouter } = require('./src/routes/system-routes');
 const { createCatalogRouter } = require('./src/routes/catalog-routes');
 const { createClientsRouter } = require('./src/routes/clients-routes');
+const { createOsRouter } = require('./src/routes/os-routes');
 const { detectLanInterfaces } = require('./src/services/lan-service');
 
 function createAppServer(options = {}) {
@@ -18,7 +19,7 @@ function createAppServer(options = {}) {
 
   const app = express();
   app.disable('x-powered-by');
-  app.use(express.json({ limit: '2mb' }));
+  app.use(express.json({ limit: '5mb' }));
 
   const httpServer = http.createServer(app);
   const syncHub = createSyncHub(httpServer);
@@ -39,10 +40,16 @@ function createAppServer(options = {}) {
   }));
   app.use('/api', createCatalogRouter({ db, syncHub }));
   app.use('/api', createClientsRouter({ db, syncHub }));
+  app.use('/api', createOsRouter({ db, dataDir, syncHub, getPort }));
 
   app.use('/api/*', (_req, res) => {
-    res.status(404).json({ error: 'Rota da API nao encontrada.' });
+    res.status(404).json({ error: 'Rota da API não encontrada.' });
   });
+
+  app.use('/media', express.static(path.join(dataDir, 'media'), {
+    fallthrough: false,
+    etag: true
+  }));
 
   const publicDir = path.join(__dirname, 'public');
   app.use(express.static(publicDir, {
@@ -113,7 +120,7 @@ if (require.main === module) {
       console.log('====================================================================');
     })
     .catch((err) => {
-      console.error('[FATAL] Nao foi possivel iniciar o servidor:', err.message);
+      console.error('[FATAL] Não foi possível iniciar o servidor:', err.message);
       process.exit(1);
     });
 

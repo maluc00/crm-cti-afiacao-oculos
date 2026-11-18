@@ -130,14 +130,14 @@ function createSystemRouter({ db, dbPath, driverName, syncHub, getPort, startedA
         .prepare("SELECT id FROM caixa_sessoes WHERE status = 'ABERTO' ORDER BY id DESC LIMIT 1")
         .get();
       if (openSession) {
-        return res.status(409).json({ error: 'Ja existe uma sessao de caixa aberta.' });
+        return res.status(409).json({ error: 'Já existe uma sessão de caixa aberta.' });
       }
 
       const saldoInicial = roundMoney(req.body?.saldo_inicial_especie ?? 0);
       if (saldoInicial < 0) {
-        return res.status(400).json({ error: 'Saldo inicial nao pode ser negativo.' });
+        return res.status(400).json({ error: 'Saldo inicial não pode ser negativo.' });
       }
-      const observacoes = String(req.body?.observacoes || 'Abertura de turno diario').trim().slice(0, 200);
+      const observacoes = String(req.body?.observacoes || 'Abertura de turno diário').trim().slice(0, 200);
 
       const created = db.transaction(() => {
         const info = db

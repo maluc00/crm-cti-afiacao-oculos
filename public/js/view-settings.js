@@ -10,29 +10,29 @@
   } = global.CTI_STORE;
 
   const ACCENT_SWATCHES = [
-    { hex: '#B45309', name: 'Ambar Oficina' },
-    { hex: '#0F766E', name: 'Ciano Optico' },
-    { hex: '#1D4ED8', name: 'Cobalto Tecnico' },
+    { hex: '#B45309', name: 'Âmbar Oficina' },
+    { hex: '#0F766E', name: 'Ciano Óptico' },
+    { hex: '#1D4ED8', name: 'Cobalto Técnico' },
     { hex: '#BE123C', name: 'Rubi Cutelaria' },
     { hex: '#EAB308', name: 'Ouro Alto Brilho' },
-    { hex: '#374151', name: 'Aco Grafite' }
+    { hex: '#374151', name: 'Aço Grafite' }
   ];
 
   const OPERATION_OPTIONS = [
     {
       value: 'OPTICAL_ONLY',
-      title: 'So Oculos (Optica)',
-      desc: 'Oculta 100% de cutelaria, afiacao, insumos e indicadores de laminas.'
+      title: 'Só Óculos (Óptica)',
+      desc: 'Oculta 100% de cutelaria, afiação, insumos e indicadores de lâminas.'
     },
     {
       value: 'CUTLERY_ONLY',
-      title: 'So Afiacao (Cutelaria)',
-      desc: 'Oculta 100% de referencias opticas, lentes, charneiras e armacoes.'
+      title: 'Só Afiação (Cutelaria)',
+      desc: 'Oculta 100% de referências ópticas, lentes, charneiras e armações.'
     },
     {
       value: 'HYBRID',
-      title: 'Hibrido (Optica + Afiacao)',
-      desc: 'Ativa seletor rapido [ Optica | Afiacao ] na OS, Bancada, Caixa e BI.'
+      title: 'Híbrido (Óptica + Afiação)',
+      desc: 'Ativa seletor rápido [ Óptica | Afiação ] na OS, Bancada, Caixa e BI.'
     }
   ];
 
@@ -43,26 +43,28 @@
     const presets = global.CTI_ICONS.BRAND_PRESETS;
     const partnersOn = s.partners_mode_enabled === '1';
     const focusOn = s.focus_mode === '1';
+    const customSvg = String(s.brand_icon_svg || '').trim();
+    const autoSvg = global.CTI_ICONS.getDefaultBrandSvgForMode(s.operation_mode);
 
     container.innerHTML = `
       <div class="page-header">
         <div>
-          <div class="eyebrow">Camaleao de Dominio &amp; Personalizacao White-Label</div>
-          <h1 class="page-title">Configuracoes do Sistema</h1>
+          <div class="eyebrow">Camaleão de Domínio &amp; Personalização White-Label</div>
+          <h1 class="page-title">Configurações do Sistema</h1>
           <p class="page-subtitle">
-            Altere modo da oficina, parceiros, superficies de bancada e identidade visual em tempo real para PC e Celular.
+            Altere modo da oficina, parceiros, superfícies de bancada e identidade visual em tempo real para PC e Celular.
           </p>
         </div>
         <div class="badge badge-accent mono">${escapeHtml(s.operation_mode)} | Y=${lum.luminance}</div>
       </div>
 
       <div class="grid-2" style="margin-bottom:16px;">
-        <!-- Bloco 1: Camaleao de Dominio & Parceiros -->
+        <!-- Bloco 1: Camaleão de Domínio & Parceiros -->
         <section class="card panel">
           <div class="panel-head">
             <div>
               <div class="eyebrow">Escopo Operacional</div>
-              <h2 class="panel-title">Modo da Oficina (Camaleao)</h2>
+              <h2 class="panel-title">Modo da Oficina (Camaleão)</h2>
             </div>
           </div>
           <div class="choice-grid" style="margin-bottom:14px;">
@@ -77,10 +79,10 @@
 
           <div class="switch-row">
             <div>
-              <div style="font-size:13px;font-weight:700;">Modo Parceiros &amp; Comissoes</div>
+              <div style="font-size:13px;font-weight:700;">Modo Parceiros &amp; Comissões</div>
               <div class="choice-desc">
                 ${partnersOn
-                  ? 'ATIVO: seleciona tecnico executor na OS e calcula comissoes.'
+                  ? 'ATIVO: seleciona técnico executor na OS e calcula comissões.'
                   : 'SOLO (OFF): oculta toda UI de parceiros e atribui OS ao operador titular.'}
               </div>
             </div>
@@ -90,24 +92,24 @@
           </div>
         </section>
 
-        <!-- Bloco 2: Superficies & F8 -->
+        <!-- Bloco 2: Superfícies & F8 -->
         <section class="card panel">
           <div class="panel-head">
             <div>
               <div class="eyebrow">Ergonomia Visual</div>
-              <h2 class="panel-title">Superficies &amp; Modo Foco (F8)</h2>
+              <h2 class="panel-title">Superfícies &amp; Modo Foco (F8)</h2>
             </div>
           </div>
           <div class="choice-grid" style="margin-bottom:14px;">
             <button class="choice-card ${s.theme_mode === 'warm-atelier' ? 'is-selected' : ''}"
                     type="button" data-theme-choice="warm-atelier">
               <span class="choice-title">Warm Atelier</span>
-              <span class="choice-desc">Claro pergaminho #F8F6F0 ideal para balcao iluminado.</span>
+              <span class="choice-desc">Claro pergaminho #F8F6F0 ideal para balcão iluminado.</span>
             </button>
             <button class="choice-card ${s.theme_mode === 'titanium-dark' ? 'is-selected' : ''}"
                     type="button" data-theme-choice="titanium-dark">
               <span class="choice-title">Titanium Dark</span>
-              <span class="choice-desc">Escuro tecnico #131418 com chanfro Double-Bezel.</span>
+              <span class="choice-desc">Escuro técnico #131418 com chanfro Double-Bezel.</span>
             </button>
             <button class="choice-card ${focusOn ? 'is-selected' : ''}"
                     type="button" id="card-focus-toggle">
@@ -120,8 +122,8 @@
 
           <div class="switch-row">
             <div>
-              <div style="font-size:13px;font-weight:700;">HUD de Atalhos no Rodape (F9)</div>
-              <div class="choice-desc">Exibe barra de atalhos rapidos no desktop.</div>
+              <div style="font-size:13px;font-weight:700;">HUD de Atalhos no Rodapé (F9)</div>
+              <div class="choice-desc">Exibe barra de atalhos rápidos no desktop.</div>
             </div>
             <button class="switch-btn" type="button" id="toggle-hud-f9"
                     role="switch" aria-checked="${s.switches?.hud_f9_visible !== false ? 'true' : 'false'}"
@@ -131,14 +133,14 @@
       </div>
 
       <div class="grid-2">
-        <!-- Bloco 3: Identidade White-Label + Motor Luminancia -->
+        <!-- Bloco 3: Identidade White-Label + Motor Luminância -->
         <section class="card panel">
           <div class="panel-head">
             <div>
               <div class="eyebrow">Identidade da Marca</div>
               <h2 class="panel-title">White-Label &amp; Motor WCAG AAA</h2>
             </div>
-            <button class="btn btn-accent btn-sm" type="button" id="preview-accent-btn">Botao de Acento</button>
+            <button class="btn btn-accent btn-sm" type="button" id="preview-accent-btn">Botão de Acento</button>
           </div>
 
           <form id="whitelabel-form" class="field" style="gap:12px;">
@@ -154,7 +156,7 @@
             </div>
 
             <div class="field">
-              <label>Cor de Destaque &amp; Luminancia Relativa</label>
+              <label>Cor de Destaque &amp; Luminância Relativa</label>
               <div class="swatch-row">
                 ${ACCENT_SWATCHES.map((sw) => `
                   <button class="swatch ${lum.hex === sw.hex ? 'is-active' : ''}" type="button"
@@ -165,16 +167,22 @@
                 <input class="input mono" id="wl-accent-hex" type="text" value="${lum.hex}" maxlength="7" style="width:110px;">
               </div>
               <div class="luminance-meter" id="wl-luminance-readout">
-                <span>Formula Y = 0.299R + 0.587G + 0.114B</span>
+                <span>Fórmula Y = 0.299R + 0.587G + 0.114B</span>
                 <span class="mono">Y = ${lum.luminance} | Texto = ${lum.contrastText}</span>
               </div>
             </div>
 
             <div class="field">
-              <label>Icone Vetorial da Marca (Zero Emojis)</label>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                <label>Ícone Vetorial da Marca (Zero Emojis)</label>
+                <button class="btn btn-sm ${!customSvg ? 'is-selected btn-accent' : ''}" type="button" id="wl-svg-auto-btn">
+                  <span style="width:14px;height:14px;display:inline-flex;">${autoSvg}</span>
+                  <span>Automático (Camaleão)</span>
+                </button>
+              </div>
               <div class="icon-preset-grid">
                 ${presets.map((p, idx) => `
-                  <button class="icon-preset-btn" type="button" data-svg-preset="${idx}">
+                  <button class="icon-preset-btn ${customSvg === p.svg ? 'is-selected' : ''}" type="button" data-svg-preset="${idx}">
                     ${p.svg}
                     <span>${escapeHtml(p.label)}</span>
                   </button>
@@ -184,7 +192,7 @@
 
             <div class="field">
               <label for="wl-brand-svg">SVG Vetorial Customizado</label>
-              <textarea class="textarea mono" id="wl-brand-svg" style="min-height:74px;font-size:11px;">${escapeHtml(s.brand_icon_svg)}</textarea>
+              <textarea class="textarea mono" id="wl-brand-svg" style="min-height:74px;font-size:11px;" placeholder="Vazio = automático conforme modo da oficina (Óptica / Cutelaria / Híbrido)">${escapeHtml(customSvg)}</textarea>
             </div>
 
             <div style="display:flex;justify-content:flex-end;">
@@ -193,35 +201,35 @@
           </form>
         </section>
 
-        <!-- Bloco 4: PIX, Taxas de Cartao & Metas -->
+        <!-- Bloco 4: PIX, Taxas de Cartão & Metas -->
         <section class="card panel">
           <div class="panel-head">
             <div>
-              <div class="eyebrow">Parametros Financeiros</div>
-              <h2 class="panel-title">PIX &amp; Taxas de Adquirencia</h2>
+              <div class="eyebrow">Parâmetros Financeiros</div>
+              <h2 class="panel-title">PIX &amp; Taxas de Adquirência</h2>
             </div>
           </div>
 
           <form id="finance-settings-form" class="field" style="gap:12px;">
             <div class="field">
               <label for="fin-pix-key">Chave PIX da Oficina</label>
-              <input class="input mono" id="fin-pix-key" type="text" value="${escapeHtml(s.pix_key)}" placeholder="CNPJ, E-mail, Telefone ou Chave Aleatoria">
+              <input class="input mono" id="fin-pix-key" type="text" value="${escapeHtml(s.pix_key)}" placeholder="CNPJ, E-mail, Telefone ou Chave Aleatória">
             </div>
 
             <div class="field-grid">
               <div class="field">
-                <label for="fin-debito-pct">Taxa Debito (%)</label>
+                <label for="fin-debito-pct">Taxa Débito (%)</label>
                 <input class="input mono" id="fin-debito-pct" type="number" step="0.01" min="0" value="${Number(s.card_fees?.debito_pct || 0)}">
               </div>
               <div class="field">
-                <label for="fin-credito-1x">Taxa Credito 1x (%)</label>
+                <label for="fin-credito-1x">Taxa Crédito 1x (%)</label>
                 <input class="input mono" id="fin-credito-1x" type="number" step="0.01" min="0" value="${Number(s.card_fees?.credito_1x_pct || 0)}">
               </div>
             </div>
 
             <div class="field-grid">
               <div class="field">
-                <label for="fin-credito-parc">Taxa Credito Parcelado (%)</label>
+                <label for="fin-credito-parc">Taxa Crédito Parcelado (%)</label>
                 <input class="input mono" id="fin-credito-parc" type="number" step="0.01" min="0" value="${Number(s.card_fees?.credito_parcelado_pct || 0)}">
               </div>
               <div class="field">
@@ -230,24 +238,24 @@
               </div>
             </div>
 
-            <div class="eyebrow" style="margin-top:6px;">Parametros de Scoring Automatico (Clientes)</div>
+            <div class="eyebrow" style="margin-top:6px;">Parâmetros de Scoring Automático (Clientes)</div>
             <div class="field-grid">
               <div class="field">
-                <label for="fin-vip-ltv">LTV Minimo VIP (R$)</label>
+                <label for="fin-vip-ltv">LTV Mínimo VIP (R$)</label>
                 <input class="input mono" id="fin-vip-ltv" type="number" step="10" min="0" value="${Number(s.scoring_rules?.ltv_vip_min ?? 350)}">
               </div>
               <div class="field">
-                <label for="fin-vip-freq">Frequencia VIP (Qtd OSs)</label>
+                <label for="fin-vip-freq">Frequência VIP (Qtd OSs)</label>
                 <input class="input mono" id="fin-vip-freq" type="number" step="1" min="1" value="${Number(s.scoring_rules?.frequencia_vip_os ?? 4)}">
               </div>
             </div>
             <div class="field">
-              <label for="fin-retirada-tol">Tolerancia Retirada na Gaveta (dias)</label>
+              <label for="fin-retirada-tol">Tolerância Retirada na Gaveta (dias)</label>
               <input class="input mono" id="fin-retirada-tol" type="number" step="1" min="1" value="${Number(s.scoring_rules?.dias_tolerancia_retirada ?? 10)}">
             </div>
 
             <div style="display:flex;justify-content:flex-end;margin-top:6px;">
-              <button class="btn btn-accent" type="submit">Salvar Parametros Financeiros</button>
+              <button class="btn btn-accent" type="submit">Salvar Parâmetros Financeiros</button>
             </div>
           </form>
         </section>
@@ -303,6 +311,11 @@
     const hexInput = document.getElementById('wl-accent-hex');
     const lumReadout = document.getElementById('wl-luminance-readout');
 
+    document.getElementById('preview-accent-btn').addEventListener('click', () => {
+      const lum = computeLuminanceClient(hexInput.value);
+      showToast(`Contraste WCAG AAA: Y = ${lum.luminance} (${lum.contrastText}).`, 'info');
+    });
+
     function previewAccent(hex) {
       if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
       const lum = computeLuminanceClient(hex);
@@ -311,7 +324,7 @@
       document.documentElement.style.setProperty('--accent-ring', lum.focusRing);
       document.documentElement.style.setProperty('--accent-soft', lum.softBg);
       lumReadout.innerHTML = `
-        <span>Formula Y = 0.299R + 0.587G + 0.114B</span>
+        <span>Fórmula Y = 0.299R + 0.587G + 0.114B</span>
         <span class="mono">Y = ${lum.luminance} | Texto = ${lum.contrastText}</span>
       `;
     }
@@ -340,13 +353,19 @@
     });
 
     const svgTextarea = document.getElementById('wl-brand-svg');
+    document.getElementById('wl-svg-auto-btn').addEventListener('click', async () => {
+      svgTextarea.value = '';
+      await saveSettings({ brand_icon_svg: '' });
+      showToast('Ícone sincronizado automaticamente ao modo da oficina.', 'ok');
+    });
+
     container.querySelectorAll('[data-svg-preset]').forEach((btn) => {
       btn.addEventListener('click', async () => {
         const preset = presets[Number(btn.getAttribute('data-svg-preset'))];
         if (!preset) return;
         svgTextarea.value = preset.svg;
         await saveSettings({ brand_icon_svg: preset.svg });
-        showToast(`Icone "${preset.label}" aplicado.`, 'ok');
+        showToast(`Ícone "${preset.label}" aplicado.`, 'ok');
       });
     });
 
@@ -384,7 +403,7 @@
             dias_tolerancia_retirada: Number(document.getElementById('fin-retirada-tol').value || 10)
           })
         });
-        showToast('Parametros financeiros salvos.', 'ok');
+        showToast('Parâmetros financeiros salvos.', 'ok');
       } catch (err) {
         showToast(err.message, 'error');
       }

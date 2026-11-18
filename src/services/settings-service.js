@@ -24,12 +24,12 @@ function parseJsonSafe(raw, fallback) {
 function toBinaryFlag(value, fieldName) {
   if (value === true || value === 1 || value === '1') return '1';
   if (value === false || value === 0 || value === '0') return '0';
-  throw new ValidationError(`Valor invalido para ${fieldName}: esperado 0 ou 1.`);
+  throw new ValidationError(`Valor inválido para ${fieldName}: esperado 0 ou 1.`);
 }
 
 function normalizeRoundedMap(obj) {
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
-    throw new ValidationError('Objeto financeiro JSON invalido.');
+    throw new ValidationError('Objeto financeiro JSON inválido.');
   }
   const clean = {};
   for (const [k, v] of Object.entries(obj)) {
@@ -57,7 +57,7 @@ function getAllSettings(db) {
     operation_mode: map.operation_mode || 'HYBRID',
     partners_mode_enabled: map.partners_mode_enabled === '1' ? '1' : '0',
     brand_name: map.brand_name || 'CTI Pro Oficina',
-    brand_slogan: map.brand_slogan || 'Precisao Optica & Cutelaria Tecnica',
+    brand_slogan: map.brand_slogan || 'Precisão Óptica & Cutelaria',
     brand_icon_svg: map.brand_icon_svg || '',
     theme_mode: map.theme_mode || 'warm-atelier',
     focus_mode: map.focus_mode === '1' ? '1' : '0',
@@ -82,13 +82,13 @@ function getAllSettings(db) {
 
 function prepareUpdates(payload) {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
-    throw new ValidationError('Corpo de configuracoes invalido.');
+    throw new ValidationError('Corpo de configurações inválido.');
   }
   const updates = [];
 
   if (payload.operation_mode !== undefined) {
     if (!VALID_OPERATION_MODES.includes(payload.operation_mode)) {
-      throw new ValidationError(`operation_mode invalido: ${payload.operation_mode}`);
+      throw new ValidationError(`operation_mode inválido: ${payload.operation_mode}`);
     }
     updates.push(['operation_mode', payload.operation_mode]);
   }
@@ -99,7 +99,7 @@ function prepareUpdates(payload) {
 
   if (payload.theme_mode !== undefined) {
     if (!VALID_THEME_MODES.includes(payload.theme_mode)) {
-      throw new ValidationError(`theme_mode invalido: ${payload.theme_mode}`);
+      throw new ValidationError(`theme_mode inválido: ${payload.theme_mode}`);
     }
     updates.push(['theme_mode', payload.theme_mode]);
   }
@@ -131,11 +131,16 @@ function prepareUpdates(payload) {
   }
 
   if (payload.brand_icon_svg !== undefined) {
-    const safeSvg = sanitizeSvg(String(payload.brand_icon_svg));
-    if (!safeSvg) {
-      throw new ValidationError('brand_icon_svg deve conter um elemento <svg> valido.');
+    const rawSvg = String(payload.brand_icon_svg || '').trim();
+    if (rawSvg === '') {
+      updates.push(['brand_icon_svg', '']);
+    } else {
+      const safeSvg = sanitizeSvg(rawSvg);
+      if (!safeSvg) {
+        throw new ValidationError('brand_icon_svg deve conter um elemento <svg> válido.');
+      }
+      updates.push(['brand_icon_svg', safeSvg]);
     }
-    updates.push(['brand_icon_svg', safeSvg]);
   }
 
   if (payload.pix_key !== undefined) {
@@ -170,7 +175,7 @@ function prepareUpdates(payload) {
       ? parseJsonSafe(payload.switches, null)
       : payload.switches;
     if (!sw || typeof sw !== 'object' || Array.isArray(sw)) {
-      throw new ValidationError('switches invalido.');
+      throw new ValidationError('switches inválido.');
     }
     updates.push(['switches_json', JSON.stringify({
       hud_f9_visible: Boolean(sw.hud_f9_visible),

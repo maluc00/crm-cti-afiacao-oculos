@@ -14,13 +14,13 @@ class PhoneValidationError extends Error {
 function normalizePhoneE164(raw) {
   const input = String(raw || '').trim();
   if (!input) {
-    throw new PhoneValidationError('Telefone/WhatsApp e obrigatorio.');
+    throw new PhoneValidationError('Telefone/WhatsApp é obrigatório.');
   }
 
   if (input.startsWith('+')) {
     const cleanIntl = '+' + input.slice(1).replace(/\D/g, '');
     if (!/^\+\d{10,15}$/.test(cleanIntl)) {
-      throw new PhoneValidationError('Telefone internacional invalido para padrao E.164.');
+      throw new PhoneValidationError('Telefone internacional inválido para padrão E.164.');
     }
     return cleanIntl;
   }
@@ -42,16 +42,16 @@ function normalizePhoneE164(raw) {
   if (digits.length === 10 || digits.length === 11) {
     const ddd = Number(digits.slice(0, 2));
     if (ddd < 11 || ddd > 99) {
-      throw new PhoneValidationError('DDD brasileiro invalido.');
+      throw new PhoneValidationError('DDD brasileiro inválido.');
     }
     return '+55' + digits;
   }
 
-  throw new PhoneValidationError('Informe o WhatsApp/Telefone com DDD valido (10 ou 11 digitos).');
+  throw new PhoneValidationError('Informe o WhatsApp/Telefone com DDD válido (10 ou 11 dígitos).');
 }
 
 /**
- * Formata telefone E.164 brasileiro para exibicao legivel no balcao.
+ * Formata telefone E.164 brasileiro para exibição legível no balcão.
  */
 function formatPhoneBr(e164) {
   const clean = String(e164 || '').trim();
@@ -76,13 +76,13 @@ function normalizeCep(raw) {
   if (!input) return '';
   const digits = input.replace(/\D/g, '');
   if (digits.length !== 8) {
-    throw new PhoneValidationError('CEP deve conter exatamente 8 digitos.');
+    throw new PhoneValidationError('CEP deve conter exatamente 8 dígitos.');
   }
   return `${digits.slice(0, 5)}-${digits.slice(5)}`;
 }
 
 /**
- * Formata CPF (11 digitos) ou CNPJ (14 digitos) quando preenchido.
+ * Formata CPF (11 dígitos) ou CNPJ (14 dígitos) quando preenchido.
  */
 function normalizeCpfCnpj(raw) {
   const input = String(raw || '').trim();
@@ -94,7 +94,7 @@ function normalizeCpfCnpj(raw) {
   if (digits.length === 14) {
     return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
   }
-  throw new PhoneValidationError('CPF deve ter 11 digitos ou CNPJ 14 digitos.');
+  throw new PhoneValidationError('CPF deve ter 11 dígitos ou CNPJ 14 dígitos.');
 }
 
 module.exports = {

@@ -11,8 +11,8 @@
   }
 
   /**
-   * Componente universal de busca rapida 100% navegavel por teclado
-   * com criacao inline sem fechar o modal atual.
+   * Componente universal de busca rápida 100% navegável por teclado
+   * com criação inline sem fechar o modal atual.
    */
   function create(container, options = {}) {
     if (!container) return null;

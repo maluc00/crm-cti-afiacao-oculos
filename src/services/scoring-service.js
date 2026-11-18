@@ -140,7 +140,7 @@ function recalculateClientScore(db, clienteId, rulesOverride = null) {
 
 function recalculateAllClientScores(db) {
   const rules = getAllSettings(db).scoring_rules;
-  const ids = db.prepare('SELECT id FROM clientes WHERE ativo = 1').all().map((r) => r.id);
+  const ids = db.prepare("SELECT id FROM clientes WHERE ativo = 1 AND telefone_e164 != '+5500000000000'").all().map((r) => r.id);
   db.transaction(() => {
     for (const id of ids) {
       recalculateClientScore(db, id, rules);

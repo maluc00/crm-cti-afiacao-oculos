@@ -27,8 +27,8 @@
     }));
 
     const titleMap = {
-      SERVICO: isEdit ? 'Editar Servico & Ficha BOM' : 'Novo Servico & Ficha BOM',
-      PRODUTO: isEdit ? 'Editar Produto de Balcao' : 'Novo Produto de Balcao',
+      SERVICO: isEdit ? 'Editar Serviço & Ficha BOM' : 'Novo Serviço & Ficha BOM',
+      PRODUTO: isEdit ? 'Editar Produto de Balcão' : 'Novo Produto de Balcão',
       INSUMO: isEdit ? 'Editar Insumo de Almoxarifado' : 'Novo Insumo (BOM)'
     };
 
@@ -36,24 +36,24 @@
       <form id="cat-item-form" class="field" style="gap:12px;" data-dirty-form="true">
         <div class="field-grid">
           <div class="field">
-            <label for="ci-nome">Nome Tecnico Completo</label>
+            <label for="ci-nome">Nome Técnico Completo</label>
             <input class="input" id="ci-nome" type="text" required value="${escapeHtml(existing?.nome_tecnico || '')}">
           </div>
           <div class="field">
-            <label for="ci-abrev">Abreviacao de Balcao</label>
+            <label for="ci-abrev">Abreviação de Balcão</label>
             <input class="input" id="ci-abrev" type="text" required value="${escapeHtml(existing?.abreviacao_balcao || '')}">
           </div>
         </div>
 
         <div class="field-grid">
           <div class="field">
-            <label for="ci-sku">Codigo SKU (opcional)</label>
+            <label for="ci-sku">Código SKU (opcional)</label>
             <input class="input mono" id="ci-sku" type="text" value="${escapeHtml(existing?.codigo_sku || '')}" placeholder="Auto se vazio">
           </div>
           <div class="field">
-            <label for="ci-dominio">Dominio</label>
+            <label for="ci-dominio">Domínio</label>
             <select class="select" id="ci-dominio">
-              ${domains.map((d) => `<option value="${d}" ${currentDomain === d ? 'selected' : ''}>${d}</option>`).join('')}
+              ${domains.map((d) => `<option value="${d}" ${currentDomain === d ? 'selected' : ''}>${escapeHtml(global.CTI_STORE.formatEnumLabel(d))}</option>`).join('')}
             </select>
           </div>
         </div>
@@ -61,7 +61,7 @@
         ${activeTipo !== 'INSUMO' ? `
           <div class="field-grid">
             <div class="field">
-              <label for="ci-preco">Preco de Venda (R$)</label>
+              <label for="ci-preco">Preço de Venda (R$)</label>
               <input class="input mono" id="ci-preco" type="number" min="0" step="0.01" required value="${Number(existing?.preco_venda ?? 0).toFixed(2)}">
             </div>
             <div class="field">
@@ -74,7 +74,7 @@
         ${activeTipo !== 'SERVICO' ? `
           <div class="field-grid">
             <div class="field">
-              <label for="ci-cmp">Custo Medio Ponderado (R$)</label>
+              <label for="ci-cmp">Custo Médio Ponderado (R$)</label>
               <input class="input mono" id="ci-cmp" type="number" min="0" step="0.01" value="${Number(existing?.custo_medio_ponderado ?? 0).toFixed(2)}">
             </div>
             <div class="field">
@@ -88,13 +88,13 @@
               <input class="input mono" id="ci-est-atual" type="number" min="0" step="0.01" value="${Number(existing?.estoque_atual ?? 0)}">
             </div>
             <div class="field">
-              <label for="ci-est-min">Estoque Minimo (Alerta)</label>
+              <label for="ci-est-min">Estoque Mínimo (Alerta)</label>
               <input class="input mono" id="ci-est-min" type="number" min="0" step="0.01" value="${Number(existing?.estoque_minimo ?? 5)}">
             </div>
           </div>
         ` : `
           <div class="field">
-            <label>Ficha Tecnica BOM (Insumos Consumidos na Execucao)</label>
+            <label>Ficha Técnica BOM (Insumos Consumidos na Execução)</label>
             <div id="ci-bom-spotlight"></div>
             <div class="line-builder-list" id="ci-bom-lines"></div>
           </div>
@@ -104,7 +104,7 @@
 
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
           <button class="btn" type="button" id="ci-cancel">Cancelar</button>
-          <button class="btn btn-accent" type="submit">Salvar ${activeTipo}</button>
+          <button class="btn btn-accent" type="submit">Salvar ${escapeHtml(global.CTI_STORE.formatEnumLabel(activeTipo))}</button>
         </div>
       </form>
     `;
@@ -137,9 +137,9 @@
       const margem = preco > 0 ? roundMoney((lucro / preco) * 100) : 0;
 
       marginStrip.innerHTML = `
-        <div><div class="combo-metric-label">Preco Venda</div><div class="combo-metric-value">${escapeHtml(formatBrl(preco))}</div></div>
+        <div><div class="combo-metric-label">Preço Venda</div><div class="combo-metric-value">${escapeHtml(formatBrl(preco))}</div></div>
         <div><div class="combo-metric-label">${activeTipo === 'SERVICO' ? 'Custo BOM' : 'Custo CMP'}</div><div class="combo-metric-value">${escapeHtml(formatBrl(custo))}</div></div>
-        <div><div class="combo-metric-label">Lucro Liquido</div><div class="combo-metric-value">${escapeHtml(formatBrl(lucro))}</div></div>
+        <div><div class="combo-metric-label">Lucro Líquido</div><div class="combo-metric-value">${escapeHtml(formatBrl(lucro))}</div></div>
         <div><div class="combo-metric-label">Margem Real</div><div class="combo-metric-value">${margem.toFixed(2)}%</div></div>
       `;
     }
@@ -148,7 +148,7 @@
       const bomListEl = document.getElementById('ci-bom-lines');
       const renderBomLines = () => {
         if (bomLines.length === 0) {
-          bomListEl.innerHTML = '<div class="eyebrow">Nenhum insumo vinculado. Busque acima para compor a ficha tecnica.</div>';
+          bomListEl.innerHTML = '<div class="eyebrow">Nenhum insumo vinculado. Busque acima para compor a ficha técnica.</div>';
         } else {
           bomListEl.innerHTML = bomLines.map((b, idx) => `
             <div class="line-builder-row">
@@ -196,7 +196,7 @@
         createLabel: 'Novo Insumo Inline',
         inlineFields: [
           { name: 'nome_tecnico', label: 'Nome do Insumo' },
-          { name: 'custo_medio_ponderado', label: 'Custo Unitario (R$)', type: 'number', step: '0.01', defaultValue: '2.50' },
+          { name: 'custo_medio_ponderado', label: 'Custo Unitário (R$)', type: 'number', step: '0.01', defaultValue: '2.50' },
           { name: 'unidade', label: 'Unidade (UN/PAR/G)', defaultValue: 'UN' }
         ],
         onSelect(opt) {
@@ -272,7 +272,7 @@
           showToast('Item atualizado com sucesso.', 'ok');
         } else {
           await apiFetch('/api/catalogo/itens', { method: 'POST', body: JSON.stringify(body) });
-          showToast('Item cadastrado no catalogo.', 'ok');
+          showToast('Item cadastrado no catálogo.', 'ok');
         }
         await closeModal();
         if (onSaved) onSaved();

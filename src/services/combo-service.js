@@ -97,7 +97,7 @@ function saveCombo(db, payload, comboId, helpers) {
     ? db.prepare('SELECT * FROM combos WHERE id = ? AND ativo = 1').get(Number(comboId))
     : null;
   if (comboId && !existing) {
-    const err = new Error('Combo nao encontrado.');
+    const err = new Error('Combo não encontrado.');
     err.statusCode = 404;
     throw err;
   }
@@ -109,11 +109,11 @@ function saveCombo(db, payload, comboId, helpers) {
   assertDomainAllowed(settings.operation_mode, dominio);
 
   const precoCombo = roundMoney(payload.preco_combo ?? existing?.preco_combo ?? 0);
-  if (precoCombo < 0) throw new ValidationError('Preco do combo nao pode ser negativo.');
+  if (precoCombo < 0) throw new ValidationError('Preço do combo não pode ser negativo.');
 
   const itensInput = Array.isArray(payload.itens) ? payload.itens : null;
   if (!itensInput || itensInput.length === 0) {
-    throw new ValidationError('Selecione ao menos 1 servico ou produto para compor o combo.');
+    throw new ValidationError('Selecione ao menos 1 serviço ou produto para compor o combo.');
   }
 
   const bomMap = computeBomMap(db);
@@ -122,7 +122,7 @@ function saveCombo(db, payload, comboId, helpers) {
       .prepare("SELECT * FROM catalogo_itens WHERE id = ? AND ativo = 1 AND tipo IN ('SERVICO', 'PRODUTO')")
       .get(Number(line.item_id));
     if (!row) {
-      throw new ValidationError(`Item de combo invalido: ${line.item_id}`);
+      throw new ValidationError(`Item de combo inválido: ${line.item_id}`);
     }
     const qty = roundQty(line.quantidade ?? 1);
     if (qty <= 0) throw new ValidationError('Quantidade do item no combo deve ser maior que zero.');
@@ -169,7 +169,7 @@ function saveCombo(db, payload, comboId, helpers) {
 function deactivateCombo(db, id) {
   const existing = db.prepare('SELECT id FROM combos WHERE id = ? AND ativo = 1').get(Number(id));
   if (!existing) {
-    const err = new Error('Combo nao encontrado.');
+    const err = new Error('Combo não encontrado.');
     err.statusCode = 404;
     throw err;
   }

@@ -9,19 +9,19 @@ const VALID_DOMAINS = ['OPTICA', 'CUTELARIA', 'AMBOS'];
 
 function roundQty(val) {
   const num = Number(val);
-  if (!Number.isFinite(num)) throw new ValidationError('Quantidade invalida.');
+  if (!Number.isFinite(num)) throw new ValidationError('Quantidade inválida.');
   return Math.round((num + Number.EPSILON) * 1000) / 1000;
 }
 
 function assertDomainAllowed(operationMode, dominio) {
   if (!VALID_DOMAINS.includes(dominio)) {
-    throw new ValidationError(`Dominio invalido: ${dominio}`);
+    throw new ValidationError(`Domínio inválido: ${dominio}`);
   }
   if (operationMode === 'OPTICAL_ONLY' && dominio === 'CUTELARIA') {
-    throw new ValidationError('Modo atual (So Oculos) bloqueia itens de Cutelaria.');
+    throw new ValidationError('Modo atual (Só Óculos) bloqueia itens de Cutelaria.');
   }
   if (operationMode === 'CUTLERY_ONLY' && dominio === 'OPTICA') {
-    throw new ValidationError('Modo atual (So Afiacao) bloqueia itens de Optica.');
+    throw new ValidationError('Modo atual (Só Afiação) bloqueia itens de Óptica.');
   }
 }
 
@@ -211,21 +211,21 @@ function saveCatalogItem(db, payload, itemId = null) {
     ? db.prepare('SELECT * FROM catalogo_itens WHERE id = ? AND ativo = 1').get(Number(itemId))
     : null;
   if (itemId && !existing) {
-    const err = new Error('Item do catalogo nao encontrado.');
+    const err = new Error('Item do catálogo não encontrado.');
     err.statusCode = 404;
     throw err;
   }
 
   const tipo = payload.tipo || existing?.tipo;
   if (!VALID_ITEM_TYPES.includes(tipo)) {
-    throw new ValidationError(`Tipo de item invalido: ${tipo}`);
+    throw new ValidationError(`Tipo de item inválido: ${tipo}`);
   }
   const dominio = payload.dominio || existing?.dominio;
   assertDomainAllowed(settings.operation_mode, dominio);
 
   const nomeTecnico = String(payload.nome_tecnico ?? existing?.nome_tecnico ?? '').trim();
   if (nomeTecnico.length < 2) {
-    throw new ValidationError('Nome tecnico deve ter ao menos 2 caracteres.');
+    throw new ValidationError('Nome técnico deve ter ao menos 2 caracteres.');
   }
   const abreviacao = String(payload.abreviacao_balcao ?? existing?.abreviacao_balcao ?? nomeTecnico).trim().slice(0, 48);
   const skuRaw = payload.codigo_sku !== undefined ? String(payload.codigo_sku).trim().toUpperCase() : existing?.codigo_sku;
@@ -234,7 +234,7 @@ function saveCatalogItem(db, payload, itemId = null) {
   const precoVenda = tipo === 'INSUMO' ? 0 : roundMoney(payload.preco_venda ?? existing?.preco_venda ?? 0);
   const cmpInicial = roundMoney(payload.custo_medio_ponderado ?? existing?.custo_medio_ponderado ?? 0);
   if (precoVenda < 0 || cmpInicial < 0) {
-    throw new ValidationError('Valores monetarios nao podem ser negativos.');
+    throw new ValidationError('Valores monetários não podem ser negativos.');
   }
 
   const estoqueAtual = tipo === 'SERVICO' ? 0 : roundQty(payload.estoque_atual ?? existing?.estoque_atual ?? 0);
@@ -289,7 +289,7 @@ function saveCatalogItem(db, payload, itemId = null) {
           .prepare("SELECT id FROM catalogo_itens WHERE id = ? AND tipo = 'INSUMO' AND ativo = 1")
           .get(Number(b.insumo_id));
         if (!insumo) {
-          throw new ValidationError(`Insumo BOM invalido: ${b.insumo_id}`);
+          throw new ValidationError(`Insumo BOM inválido: ${b.insumo_id}`);
         }
         const qty = roundQty(b.quantidade_consumida);
         if (qty <= 0) throw new ValidationError('Quantidade BOM deve ser maior que zero.');
@@ -311,7 +311,7 @@ function registerPurchaseCmp(db, payload) {
     .prepare("SELECT * FROM catalogo_itens WHERE id = ? AND ativo = 1 AND tipo IN ('INSUMO', 'PRODUTO')")
     .get(Number(payload.item_id));
   if (!item) {
-    throw new ValidationError('Item de estoque (Insumo ou Produto) nao encontrado.');
+    throw new ValidationError('Item de estoque (Insumo ou Produto) não encontrado.');
   }
 
   const qty = roundQty(payload.quantidade);
@@ -323,11 +323,11 @@ function registerPurchaseCmp(db, payload) {
   let custoUnitario;
   if (payload.valor_pago !== undefined && payload.valor_pago !== null && payload.valor_pago !== '') {
     totalPago = roundMoney(payload.valor_pago);
-    if (totalPago < 0) throw new ValidationError('Valor pago nao pode ser negativo.');
+    if (totalPago < 0) throw new ValidationError('Valor pago não pode ser negativo.');
     custoUnitario = roundMoney(totalPago / qty);
   } else if (payload.custo_unitario !== undefined && payload.custo_unitario !== null && payload.custo_unitario !== '') {
     custoUnitario = roundMoney(payload.custo_unitario);
-    if (custoUnitario < 0) throw new ValidationError('Custo unitario nao pode ser negativo.');
+    if (custoUnitario < 0) throw new ValidationError('Custo unitário não pode ser negativo.');
     totalPago = roundMoney(qty * custoUnitario);
   } else {
     throw new ValidationError('Informe valor_pago ou custo_unitario da compra.');
@@ -373,12 +373,12 @@ function registerStockAdjustment(db, payload) {
     .prepare("SELECT * FROM catalogo_itens WHERE id = ? AND ativo = 1 AND tipo IN ('INSUMO', 'PRODUTO')")
     .get(Number(payload.item_id));
   if (!item) {
-    throw new ValidationError('Item de estoque nao encontrado.');
+    throw new ValidationError('Item de estoque não encontrado.');
   }
 
   const motivo = String(payload.motivo || '').trim();
   if (motivo.length < 3) {
-    throw new ValidationError('Informe um motivo valido (minimo 3 caracteres) para o ajuste de inventario.');
+    throw new ValidationError('Informe um motivo válido (mínimo 3 caracteres) para o ajuste de inventário.');
   }
 
   const estoqueAnterior = roundQty(item.estoque_atual);
@@ -392,7 +392,7 @@ function registerStockAdjustment(db, payload) {
   }
 
   if (estoquePosterior < 0) {
-    throw new ValidationError('Estoque posterior nao pode ficar negativo.');
+    throw new ValidationError('Estoque posterior não pode ficar negativo.');
   }
   if (estoquePosterior === estoqueAnterior) {
     throw new ValidationError('A nova quantidade deve ser diferente do estoque atual.');
@@ -432,7 +432,7 @@ function saveCombo(db, payload, comboId = null) {
 function deactivateItem(db, id) {
   const existing = db.prepare('SELECT id FROM catalogo_itens WHERE id = ? AND ativo = 1').get(Number(id));
   if (!existing) {
-    const err = new Error('Item nao encontrado.');
+    const err = new Error('Item não encontrado.');
     err.statusCode = 404;
     throw err;
   }
@@ -444,7 +444,7 @@ function createAttributeInline(db, payload) {
   const settings = getAllSettings(db);
   const categoria = String(payload.categoria || 'MATERIAL').toUpperCase();
   if (!['MATERIAL', 'LOCAL_AVARIA', 'ESTADO_LENTE'].includes(categoria)) {
-    throw new ValidationError('Categoria de atributo invalida.');
+    throw new ValidationError('Categoria de atributo inválida.');
   }
   const dominio = payload.dominio || (settings.operation_mode === 'CUTLERY_ONLY' ? 'CUTELARIA' : 'OPTICA');
   assertDomainAllowed(settings.operation_mode, dominio);

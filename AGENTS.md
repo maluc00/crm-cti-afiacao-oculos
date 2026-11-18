@@ -61,15 +61,15 @@ Este documento define as regras inviolaveis de arquitetura, qualidade de codigo 
 
 ---
 
-## 4. MAPA MODULAR DO PROJETO (FASES 1 E 2)
+## 4. MAPA MODULAR DO PROJETO (FASES 1 A 3)
 
-- `server.js`: Servidor HTTP + Express + integracao WebSocket LAN (`0.0.0.0:3000`).
+- `server.js`: Servidor HTTP + Express + static `/media` + integracao WebSocket LAN (`0.0.0.0:3000`).
 - `src/db/driver.js`: Adaptador SQLite sincrono (`better-sqlite3` prioritario com fallback nativo `node:sqlite`).
 - `src/db/database.js`: Inicializacao segura do banco, pragmas WAL/FK e execucao idempotente de `data/schema.sql` e `data/seed.sql`.
-- `src/utils/`: `money.js` (`roundMoney`, `formatBrl`, `computeLuminance`, `sanitizeSvg`) e `phone.js` (normalizacao canonica E.164, mascara BR, CEP e CPF/CNPJ).
-- `src/services/`: `settings-service.js`, `lan-service.js`, `catalog-service.js` (itens, BOM, CMP e ajustes), `combo-service.js` (pacotes e margens), `clients-service.js` (cadastro elastico e prontuario) e `scoring-service.js` (motor hibrido 1-5 estrelas).
-- `src/ws/sync-hub.js`: Hub WebSocket em `/ws` para broadcast em tempo real na LAN.
-- `src/routes/`: `system-routes.js`, `catalog-routes.js` e `clients-routes.js`.
-- `public/css/`: `design-tokens.css`, `shell.css`, `views.css`, `phase2.css`.
-- `public/js/`: `icons.js`, `state-sync.js`, `spotlight-select.js`, `modals.js`, `modals-catalog.js`, `modals-catalog-stock.js`, `modals-clients.js`, `view-settings.js`, `view-catalog.js`, `view-clients.js`, `views-shell.js`, `app.js`.
-- `tests/`: `phase1.test.js` e `phase2.test.js`.
+- `src/utils/`: `money.js` (`roundMoney`, `formatBrl`, `computeLuminance`, `sanitizeSvg`), `phone.js` (normalizacao E.164, mascara BR, CEP e CPF/CNPJ) e `pix-brcode.js` (payload EMVCo PIX Copia-e-Cola com CRC16 e SVG QR).
+- `src/services/`: `settings-service.js`, `lan-service.js`, `catalog-service.js`, `combo-service.js`, `clients-service.js`, `scoring-service.js`, `os-service.js` (check-in Express/Completo/Lote), `os-queries.js`, `os-fsm.js`, `os-bom-ledger.js` e `os-media-print.js`.
+- `src/ws/sync-hub.js`: Hub WebSocket em `/ws` para broadcast em tempo real na LAN (`os:updated`, `settings:updated`, `catalog:updated`, `clients:updated`).
+- `src/routes/`: `system-routes.js`, `catalog-routes.js`, `clients-routes.js` e `os-routes.js`.
+- `public/css/`: `design-tokens.css`, `shell.css`, `views.css`, `phase2.css`, `phase3.css`.
+- `public/js/`: `icons.js`, `state-sync.js`, `spotlight-select.js`, `modals.js`, `modals-catalog.js`, `modals-catalog-stock.js`, `modals-clients.js`, `modal-os-modes.js`, `modal-os-checkin.js`, `modals-bench.js`, `webp-photo.js`, `thermal-printer.js`, `view-settings.js`, `view-catalog.js`, `view-clients.js`, `view-bench.js`, `views-shell.js`, `app.js`.
+- `tests/`: `phase1.test.js`, `phase2.test.js` e `phase3.test.js`.

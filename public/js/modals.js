@@ -1,7 +1,7 @@
 (function attachModals(global) {
   'use strict';
 
-  const { state, apiFetch, formatBrl, escapeHtml, showToast, refreshOverview } = global.CTI_STORE;
+  const { state, apiFetch, formatBrl, formatEnumLabel, escapeHtml, showToast, refreshOverview } = global.CTI_STORE;
 
   function openModal(title, bodyHtml, large = false) {
     const backdrop = document.getElementById('modal-backdrop');
@@ -19,8 +19,11 @@
 
   async function closeModal() {
     const backdrop = document.getElementById('modal-backdrop');
+    const panel = document.getElementById('modal-panel');
     const bodyEl = document.getElementById('modal-body');
     backdrop.classList.add('hidden');
+    backdrop.classList.remove('is-blur-strong');
+    panel.classList.remove('modal-lg', 'modal-xl');
     bodyEl.innerHTML = '';
     state.modalOpen = false;
     if (state.pendingRefresh) {
@@ -30,7 +33,7 @@
   }
 
   async function openLanQrModal() {
-    openModal('Conexao Mobile via Wi-Fi / LAN', '<div class="eyebrow">Detectando adaptadores de rede...</div>');
+    openModal('Conexão Mobile via Wi-Fi / LAN', '<div class="eyebrow">Detectando adaptadores de rede...</div>');
     try {
       const info = await apiFetch('/api/system/lan-info');
       const pinBox = info.pinEnabled
@@ -46,7 +49,7 @@
            </div>`
         : `<div class="switch-row" style="width:100%;">
              <div style="text-align:left;">
-               <div class="eyebrow">Seguranca LAN Opcional</div>
+               <div class="eyebrow">Segurança LAN Opcional</div>
                <div style="font-size:12px;">Acesso direto na rede Wi-Fi local</div>
              </div>
              <button class="btn btn-sm" type="button" id="lan-pin-toggle">Ativar PIN</button>
@@ -56,11 +59,11 @@
         <div class="qr-stage">
           <div class="qr-frame">${info.qrSvg}</div>
           <div>
-            <div class="eyebrow">Endereco do Servidor Local (${escapeHtml(info.primaryInterface)})</div>
+            <div class="eyebrow">Endereço do Servidor Local (${escapeHtml(info.primaryInterface)})</div>
             <div class="mono" style="font-size:15px;font-weight:700;margin-top:4px;word-break:break-all;">
               ${escapeHtml(info.lanUrl)}
             </div>
-            <div class="page-subtitle">Aponte a camera do celular na mesma rede Wi-Fi para operar em tempo real.</div>
+            <div class="page-subtitle">Aponte a câmera do celular na mesma rede Wi-Fi para operar em tempo real.</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
             <button class="btn btn-accent" type="button" id="lan-copy-url">
@@ -76,12 +79,12 @@
           <div class="eyebrow">Dispositivos Conectados: <span class="mono">${info.connectedClients}</span></div>
         </div>
       `;
-      openModal('Conexao Mobile via Wi-Fi / LAN', html);
+      openModal('Conexão Mobile via Wi-Fi / LAN', html);
 
       document.getElementById('lan-copy-url').addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(info.lanUrl);
-          showToast('Link LAN copiado para a area de transferencia.', 'ok');
+          showToast('Link LAN copiado para a área de transferência.', 'ok');
         } catch (_err) {
           showToast(info.lanUrl, 'info');
         }
@@ -105,66 +108,95 @@
             method: 'POST',
             body: JSON.stringify({ enabled: true, regenerate: true })
           });
-          showToast('Novo codigo PIN gerado.', 'ok');
+          showToast('Novo código PIN gerado.', 'ok');
           openLanQrModal();
         });
       }
     } catch (err) {
-      openModal('Conexao Mobile via Wi-Fi / LAN', `<div class="eyebrow" style="color:var(--status-danger);">${escapeHtml(err.message)}</div>`);
+      openModal('Conexão Mobile via Wi-Fi / LAN', `<div class="eyebrow" style="color:var(--status-danger);">${escapeHtml(err.message)}</div>`);
     }
   }
 
-  function buildSpotlightEntries(queryText) {
-    const q = String(queryText || '').trim().toLowerCase();
-    const overview = state.overview;
-    const baseCommands = [
-      { kind: 'ROTA', label: 'Atendimento & Abertura de OS', meta: 'Atalho F2', action: () => global.CTI_APP.navigate('atendimento') },
-      { kind: 'ROTA', label: 'Bancada Tecnica (Fila & Producao)', meta: 'Operacao', action: () => global.CTI_APP.navigate('bancada') },
-      { kind: 'ROTA', label: 'Clientes & CRM', meta: 'Cadastro', action: () => global.CTI_APP.navigate('clientes') },
-      { kind: 'ROTA', label: 'Catalogo, BOM & Estoque', meta: 'Itens ativos', action: () => global.CTI_APP.navigate('estoque') },
-      { kind: 'ROTA', label: 'Caixa Diario & Livro-Razao', meta: 'Atalho F4', action: () => global.CTI_APP.navigate('caixa') },
-      { kind: 'ROTA', label: 'Painel BI & Indicadores', meta: 'Analise', action: () => global.CTI_APP.navigate('bi') },
-      { kind: 'ROTA', label: 'Ajustes White-Label & Modo Oficina', meta: 'Configuracoes', action: () => global.CTI_APP.navigate('configuracoes') },
-      { kind: 'ACAO', label: 'Conectar Celular via QR Code LAN', meta: 'Atalho F7', action: openLanQrModal },
-      { kind: 'ACAO', label: 'Alternar Modo Foco Universal', meta: 'Atalho F8', action: () => global.CTI_APP.toggleFocusMode() }
+  function buildBaseSpotlightCommands() {
+    return [
+      { kind: 'AÇÃO', label: 'Abrir Nova Ordem de Serviço (Check-in F4)', meta: 'Atalho F4', action: () => global.CTI_MODAL_OS_CHECKIN?.openOsCheckinModal({ modo: 'EXPRESS' }) },
+      { kind: 'ROTA', label: 'Atendimento & Balcão Express', meta: 'Operação', action: () => global.CTI_APP.navigate('atendimento') },
+      { kind: 'ROTA', label: 'Bancada Técnica (Kanban & Stepper)', meta: 'Produção', action: () => global.CTI_APP.navigate('bancada') },
+      { kind: 'ROTA', label: 'Clientes & Prontuário CRM', meta: 'Cadastro', action: () => global.CTI_APP.navigate('clientes') },
+      { kind: 'ROTA', label: 'Catálogo, Ficha BOM & Combos', meta: 'Itens ativos', action: () => global.CTI_APP.navigate('estoque') },
+      { kind: 'ROTA', label: 'Caixa Diário & Livro-Razão', meta: 'Atalho F2', action: () => global.CTI_APP.navigate('caixa') },
+      { kind: 'ROTA', label: 'BI & Indicadores Executivos', meta: 'Gestão', action: () => global.CTI_APP.navigate('bi') },
+      { kind: 'ROTA', label: 'Ajustes White-Label & Modo Oficina', meta: 'Configurações', action: () => global.CTI_APP.navigate('configuracoes') },
+      { kind: 'AÇÃO', label: 'Conectar Celular via QR Code LAN', meta: 'Atalho F7', action: openLanQrModal },
+      { kind: 'AÇÃO', label: 'Alternar Modo Foco Universal', meta: 'Atalho F8', action: () => global.CTI_APP.toggleFocusMode() }
     ];
-
-    const catalogEntries = (overview?.catalogItems || []).map((item) => ({
-      kind: item.tipo,
-      label: `${item.abreviacao_balcao} - ${item.nome_tecnico}`,
-      meta: `${item.dominio} | ${formatBrl(item.preco_venda)}`,
-      action: () => global.CTI_APP.navigate('estoque')
-    }));
-
-    const merged = baseCommands.concat(catalogEntries);
-    if (!q) return merged.slice(0, 12);
-    return merged
-      .filter((entry) =>
-        entry.label.toLowerCase().includes(q) ||
-        entry.kind.toLowerCase().includes(q) ||
-        entry.meta.toLowerCase().includes(q)
-      )
-      .slice(0, 14);
   }
 
   function openSpotlightModal() {
     const html = `
       <div class="field">
-        <input class="input" id="spotlight-search-input" type="search" placeholder="Buscar tela, comando, servico optico ou afiacao..." autocomplete="off">
+        <input class="input" id="spotlight-search-input" type="search" placeholder="Buscar OS, cliente, serviço, combo, produto ou comando..." autocomplete="off">
       </div>
       <div class="spotlight-list" id="spotlight-results"></div>
     `;
-    openModal('Spotlight de Comandos & Catalogo', html, true);
+    openModal('Spotlight Global Universal (Ctrl+K)', html, true);
 
     const input = document.getElementById('spotlight-search-input');
     const resultsEl = document.getElementById('spotlight-results');
+    let debounceTimer = null;
 
-    function renderResults() {
-      const entries = buildSpotlightEntries(input.value);
+    async function renderResults() {
+      const q = String(input.value || '').trim();
+      const qLow = q.toLowerCase();
+      const cmds = buildBaseSpotlightCommands().filter((c) =>
+        !qLow || c.label.toLowerCase().includes(qLow) || c.meta.toLowerCase().includes(qLow)
+      );
+
+      let remoteEntries = [];
+      try {
+        const res = await apiFetch(`/api/spotlight?q=${encodeURIComponent(q)}`);
+        for (const o of res.orders || []) {
+          remoteEntries.push({
+            kind: 'OS',
+            label: `${o.codigo_os} - ${o.cliente_nome}`,
+            meta: `${o.status} | ${formatBrl(o.valor_total)}`,
+            action: () => global.CTI_MODALS_BENCH?.openOrderDetailModal(o.id)
+          });
+        }
+        for (const c of res.clients || []) {
+          remoteEntries.push({
+            kind: 'CLIENTE',
+            label: c.nome,
+            meta: c.telefone_e164,
+            action: () => global.CTI_MODALS_CLIENTS?.openClientDossierModal({ clientId: c.id })
+          });
+        }
+        for (const cb of res.combos || []) {
+          remoteEntries.push({
+            kind: 'COMBO',
+            label: cb.abreviacao || cb.nome,
+            meta: `${formatEnumLabel(cb.dominio)} | ${formatBrl(cb.preco_combo)}`,
+            action: () => global.CTI_APP.navigate('estoque')
+          });
+        }
+        for (const it of res.catalog || []) {
+          remoteEntries.push({
+            kind: formatEnumLabel(it.tipo),
+            label: `${it.abreviacao_balcao} - ${it.nome_tecnico}`,
+            meta: `${formatEnumLabel(it.dominio)} | ${formatBrl(it.preco_venda)}`,
+            action: () => global.CTI_APP.navigate('estoque')
+          });
+        }
+      } catch (_err) {
+        remoteEntries = [];
+      }
+
+      const entries = (q ? remoteEntries.concat(cmds) : cmds.slice(0, 5).concat(remoteEntries)).slice(0, 14);
       if (entries.length === 0) {
-        resultsEl.innerHTML = '<div class="eyebrow" style="padding:12px;">Nenhum comando ou item compativel no modo atual.</div>';
+        resultsEl.innerHTML = '<div class="eyebrow" style="padding:12px;">Nenhum resultado encontrado no modo atual.</div>';
         return;
       }
+
       resultsEl.innerHTML = entries
         .map((entry, idx) => `
           <button class="spotlight-row" type="button" data-spot-idx="${idx}">
@@ -186,7 +218,10 @@
       });
     }
 
-    input.addEventListener('input', renderResults);
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(renderResults, 90);
+    });
     renderResults();
     setTimeout(() => input.focus(), 20);
   }
@@ -207,16 +242,16 @@
             <div class="kpi-hint mono">Aberto em ${escapeHtml(session.aberto_em)}</div>
           </div>
           <div class="card kpi-card">
-            <div class="eyebrow">Fundo Inicial (Especie)</div>
+            <div class="eyebrow">Fundo Inicial (Espécie)</div>
             <div class="kpi-value mono">${escapeHtml(formatBrl(session.saldo_inicial_especie))}</div>
-            <div class="kpi-hint">Registrado no Livro-Razao Imutavel</div>
+            <div class="kpi-hint">Registrado no Livro-Razão Imutável</div>
           </div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:10px;">
           <button class="btn btn-accent" type="button" id="cash-modal-go-ledger">Abrir Caixa &amp; Ledger</button>
         </div>
       `;
-      openModal('Semaforo do Caixa Diario', html);
+      openModal('Semáforo do Caixa Diário', html);
       document.getElementById('cash-modal-go-ledger').addEventListener('click', async () => {
         await closeModal();
         global.CTI_APP.navigate('caixa');
@@ -226,24 +261,24 @@
 
     const html = `
       <p class="page-subtitle" style="margin-bottom:14px;">
-        Nenhum turno de caixa aberto hoje. Informe o fundo de troco em especie para liberar o registro financeiro.
+        Nenhum turno de caixa aberto hoje. Informe o fundo de troco em espécie para liberar o registro financeiro.
       </p>
       <form id="quick-cash-open-form" class="field" style="gap:12px;">
         <div class="field">
-          <label for="cash-saldo-inicial">Saldo Inicial em Especie (R$)</label>
+          <label for="cash-saldo-inicial">Saldo Inicial em Espécie (R$)</label>
           <input class="input mono" id="cash-saldo-inicial" type="number" min="0" step="0.01" value="100.00" required>
         </div>
         <div class="field">
-          <label for="cash-observacoes">Observacao de Abertura</label>
+          <label for="cash-observacoes">Observação de Abertura</label>
           <input class="input" id="cash-observacoes" type="text" value="Abertura de turno matinal" maxlength="160">
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
           <button class="btn" type="button" id="cash-cancel-btn">Cancelar</button>
-          <button class="btn btn-accent" type="submit">Abrir Caixa Diario</button>
+          <button class="btn btn-accent" type="submit">Abrir Caixa Diário</button>
         </div>
       </form>
     `;
-    openModal('Semaforo do Caixa Diario', html);
+    openModal('Semáforo do Caixa Diário', html);
     document.getElementById('cash-cancel-btn').addEventListener('click', closeModal);
     document.getElementById('quick-cash-open-form').addEventListener('submit', async (ev) => {
       ev.preventDefault();
@@ -282,7 +317,7 @@
         sessionStorage.setItem('cti_pin_ok', '1');
         return;
       } catch (_err) {
-        // Segue para prompt manual se PIN da URL for invalido
+        // Segue para prompt manual se PIN da URL for inválido
       }
     }
 

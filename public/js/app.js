@@ -13,6 +13,8 @@
   const modals = global.CTI_MODALS;
 
   const VALID_ROUTES = ['atendimento', 'bancada', 'clientes', 'estoque', 'caixa', 'bi', 'configuracoes'];
+  let routeRenderSeq = 0;
+  let mountedRoute = null;
 
   function renderDomainSwitcher() {
     const wrap = document.getElementById('domain-switcher-wrap');
@@ -20,20 +22,22 @@
     if (!wrap || !settings) return;
 
     if (settings.operation_mode === 'OPTICAL_ONLY') {
-      wrap.innerHTML = `<span class="domain-badge-static">${icon('glasses')}<span>Exclusivo Optica</span></span>`;
+      wrap.innerHTML = `<button class="domain-badge-static" type="button" id="btn-domain-static" title="Alterar modo da oficina">${icon('glasses')}<span>Exclusivo Óptica</span></button>`;
+      document.getElementById('btn-domain-static')?.addEventListener('click', () => navigate('configuracoes'));
       return;
     }
     if (settings.operation_mode === 'CUTLERY_ONLY') {
-      wrap.innerHTML = `<span class="domain-badge-static">${icon('scissors')}<span>Exclusivo Afiacao</span></span>`;
+      wrap.innerHTML = `<button class="domain-badge-static" type="button" id="btn-domain-static" title="Alterar modo da oficina">${icon('scissors')}<span>Exclusivo Afiação</span></button>`;
+      document.getElementById('btn-domain-static')?.addEventListener('click', () => navigate('configuracoes'));
       return;
     }
 
     const active = state.domainFilter || 'ALL';
     wrap.innerHTML = `
-      <div class="domain-switcher" role="group" aria-label="Filtro rapido de dominio">
+      <div class="domain-switcher" role="group" aria-label="Filtro rápido de domínio">
         <button class="domain-pill ${active === 'ALL' ? 'is-active' : ''}" type="button" data-dom="ALL">Todos</button>
-        <button class="domain-pill ${active === 'OPTICA' ? 'is-active' : ''}" type="button" data-dom="OPTICA">Optica</button>
-        <button class="domain-pill ${active === 'CUTELARIA' ? 'is-active' : ''}" type="button" data-dom="CUTELARIA">Afiacao</button>
+        <button class="domain-pill ${active === 'OPTICA' ? 'is-active' : ''}" type="button" data-dom="OPTICA">Óptica</button>
+        <button class="domain-pill ${active === 'CUTELARIA' ? 'is-active' : ''}" type="button" data-dom="CUTELARIA">Afiação</button>
       </div>
     `;
     wrap.querySelectorAll('[data-dom]').forEach((btn) => {
@@ -51,21 +55,21 @@
 
     renderDomainSwitcher();
 
-    // Semaforo do Caixa Diario
+    // Semáforo do Caixa Diário
     const cashLed = document.getElementById('cash-led');
     const cashText = document.getElementById('cash-status-text');
     const isOpen = overview?.cashSession && overview.cashSession.status === 'ABERTO';
     cashLed.className = `led ${isOpen ? 'led-green' : 'led-amber'}`;
     cashText.textContent = isOpen ? `Caixa #${overview.cashSession.id} Aberto` : 'Caixa Fechado';
 
-    // Botao Tema
+    // Botão Tema
     const themeIcon = document.getElementById('theme-toggle-icon');
     const themeLabel = document.getElementById('theme-toggle-label');
     const isDark = settings.theme_mode === 'titanium-dark';
     themeIcon.innerHTML = icon(isDark ? 'sun' : 'moon');
     themeLabel.textContent = isDark ? 'Warm Atelier' : 'Titanium';
 
-    // Botao Foco F8
+    // Botão Foco F8
     const focusBtn = document.getElementById('btn-focus-toggle');
     focusBtn.classList.toggle('btn-accent', settings.focus_mode === '1');
 
@@ -77,14 +81,14 @@
     syncLabel.textContent = state.wsConnected ? 'LAN Sincronizado' : 'Reconectando...';
     syncCount.textContent = String(state.connectedClients || 1);
 
-    // HUD readout
+    // Leitura HUD
     const hudReadout = document.getElementById('hud-mode-readout');
     if (hudReadout) {
       const pLabel = settings.partners_mode_enabled === '1' ? 'PARCEIROS' : 'SOLO';
       hudReadout.textContent = `${settings.operation_mode} | ${pLabel}`;
     }
 
-    // Active nav markers
+    // Marcadores ativos de navegação
     document.querySelectorAll('[data-route]').forEach((btn) => {
       btn.classList.toggle('is-active', btn.getAttribute('data-route') === state.route);
     });
@@ -93,19 +97,44 @@
   function renderCurrentRoute() {
     const viewport = document.getElementById('app-viewport');
     if (!viewport || !state.overview) return;
-    if (state.route === 'configuracoes') {
+
+    const seq = ++routeRenderSeq;
+    const route = state.route;
+    const canCommit = () => seq === routeRenderSeq && state.route === route;
+
+    if (mountedRoute !== route) {
+      viewport.innerHTML = '<section class="card panel"><div class="eyebrow">Carregando módulo...</div></section>';
+      window.scrollTo(0, 0);
+      mountedRoute = route;
+    }
+
+    const handleAsyncError = (err) => {
+      if (canCommit()) {
+        viewport.innerHTML = `<section class="card panel"><div class="eyebrow" style="color:var(--status-danger);">Erro ao carregar módulo</div><p class="page-subtitle">${global.CTI_STORE.escapeHtml(err.message)}</p></section>`;
+      }
+      showToast(err.message, 'error');
+    };
+
+    if (route === 'configuracoes') {
       global.CTI_VIEW_SETTINGS.renderSettingsView(viewport);
       hydrateIcons(viewport);
-    } else if (state.route === 'estoque') {
-      global.CTI_VIEW_CATALOG.renderCatalogView(viewport)
-        .then(() => hydrateIcons(viewport))
-        .catch((err) => showToast(err.message, 'error'));
-    } else if (state.route === 'clientes') {
-      global.CTI_VIEW_CLIENTS.renderClientsView(viewport)
-        .then(() => hydrateIcons(viewport))
-        .catch((err) => showToast(err.message, 'error'));
+    } else if (route === 'bancada') {
+      global.CTI_VIEW_BENCH.renderBenchView(viewport, canCommit)
+        .then(() => { if (canCommit()) hydrateIcons(viewport); })
+        .catch(handleAsyncError);
+    } else if (route === 'estoque') {
+      global.CTI_VIEW_CATALOG.renderCatalogView(viewport, canCommit)
+        .then(() => { if (canCommit()) hydrateIcons(viewport); })
+        .catch(handleAsyncError);
+    } else if (route === 'clientes') {
+      global.CTI_VIEW_CLIENTS.renderClientsView(viewport, canCommit)
+        .then(() => { if (canCommit()) hydrateIcons(viewport); })
+        .catch(handleAsyncError);
+    } else if (route === 'atendimento') {
+      global.CTI_VIEWS_SHELL.renderOperationalView(viewport);
+      hydrateIcons(viewport);
     } else {
-      global.CTI_VIEWS_SHELL.renderOperationalView(viewport, state.route);
+      global.CTI_VIEWS_SHELL.renderUpcomingPhaseView(viewport, route);
       hydrateIcons(viewport);
     }
   }
@@ -150,7 +179,6 @@
     document.getElementById('btn-theme-toggle').addEventListener('click', toggleThemeMode);
     document.getElementById('btn-focus-toggle').addEventListener('click', toggleFocusMode);
     document.getElementById('btn-lan-qr').addEventListener('click', modals.openLanQrModal);
-    document.getElementById('sidebar-qr-btn').addEventListener('click', modals.openLanQrModal);
     document.getElementById('modal-close').addEventListener('click', modals.closeModal);
 
     document.getElementById('modal-backdrop').addEventListener('click', (ev) => {
@@ -163,6 +191,7 @@
       btn.addEventListener('click', () => {
         const act = btn.getAttribute('data-hud-action');
         if (act === 'spotlight') modals.openSpotlightModal();
+        else if (act === 'new-os') global.CTI_MODAL_OS_CHECKIN.openOsCheckinModal({ modo: 'EXPRESS', onCreated: renderCurrentRoute });
         else if (act === 'qr') modals.openLanQrModal();
         else if (act === 'focus') toggleFocusMode();
         else if (act === 'hud') toggleKeyboardHud();
@@ -176,10 +205,10 @@
         modals.openSpotlightModal();
       } else if (ev.key === 'F2') {
         ev.preventDefault();
-        navigate('atendimento');
+        navigate('caixa');
       } else if (ev.key === 'F4') {
         ev.preventDefault();
-        navigate('caixa');
+        global.CTI_MODAL_OS_CHECKIN.openOsCheckinModal({ modo: 'EXPRESS', onCreated: renderCurrentRoute });
       } else if (ev.key === 'F7') {
         ev.preventDefault();
         modals.openLanQrModal();

@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "test": "node --test tests/phase1.test.js tests/phase2.test.js"
+    "test": "node --test tests/phase1.test.js tests/phase2.test.js tests/phase3.test.js"
   },
   "dependencies": {
     "express": "^4.21.2",

@@ -1,23 +1,24 @@
 (function attachCatalogView(global) {
   'use strict';
 
-  const { state, apiFetch, formatBrl, escapeHtml, showToast } = global.CTI_STORE;
+  const { state, apiFetch, formatBrl, formatEnumLabel, escapeHtml, showToast } = global.CTI_STORE;
 
   let activeTab = 'SERVICO';
   let searchQuery = '';
   let cachedCatalog = null;
 
-  async function loadAndRender(container) {
+  async function loadAndRender(container, canCommit) {
     const domain = state.domainFilter && state.domainFilter !== 'ALL'
       ? `?domain=${encodeURIComponent(state.domainFilter)}`
       : '';
     cachedCatalog = await apiFetch(`/api/catalogo${domain}`);
+    if (canCommit && !canCommit()) return;
     renderMarkup(container);
   }
 
   function renderServicesTable(items) {
     if (items.length === 0) {
-      return '<tr><td colspan="6" style="color:var(--text-secondary);">Nenhum servico encontrado neste dominio.</td></tr>';
+      return '<tr><td colspan="6" style="color:var(--text-secondary);">Nenhum serviço encontrado neste domínio.</td></tr>';
     }
     return items.map((s) => `
       <tr>
@@ -27,7 +28,7 @@
           <div style="font-size:11px;color:var(--text-secondary);">${escapeHtml(s.nome_tecnico)}</div>
         </td>
         <td>
-          <span class="badge badge-accent">${escapeHtml(s.dominio)}</span>
+          <span class="badge badge-accent">${escapeHtml(formatEnumLabel(s.dominio))}</span>
           <span class="badge" style="margin-left:4px;">${s.garantia_dias}d</span>
         </td>
         <td>
@@ -37,7 +38,7 @@
         </td>
         <td class="num">
           <div>${escapeHtml(formatBrl(s.preco_venda))}</div>
-          <div style="font-size:10px;color:var(--status-ok);">Liq: ${escapeHtml(formatBrl(s.lucro_liquido))} (${s.margem_pct}%)</div>
+          <div style="font-size:10px;color:var(--status-ok);">Líq.: ${escapeHtml(formatBrl(s.lucro_liquido))} (${s.margem_pct}%)</div>
         </td>
         <td class="action-cell">
           <button class="btn btn-sm" type="button" data-edit-item="${s.id}">Editar</button>
@@ -58,13 +59,13 @@
           <strong>${escapeHtml(it.abreviacao_balcao)}</strong>
           <div style="font-size:11px;color:var(--text-secondary);">${escapeHtml(it.nome_tecnico)}</div>
         </td>
-        <td><span class="badge badge-accent">${escapeHtml(it.dominio)}</span></td>
+        <td><span class="badge badge-accent">${escapeHtml(formatEnumLabel(it.dominio))}</span></td>
         <td class="num">
           <span class="mono">${it.estoque_atual} ${escapeHtml(it.unidade)}</span>
           <div style="margin-top:3px;">
             ${it.alerta_ruptura
-              ? `<span class="rupture-pill">Min ${it.estoque_minimo}</span>`
-              : `<span class="ok-pill">Min ${it.estoque_minimo}</span>`}
+              ? `<span class="rupture-pill">Mín. ${it.estoque_minimo}</span>`
+              : `<span class="ok-pill">Mín. ${it.estoque_minimo}</span>`}
           </div>
         </td>
         <td class="num">
@@ -82,7 +83,7 @@
 
   function renderCombosGrid(combos) {
     if (combos.length === 0) {
-      return '<div class="eyebrow">Nenhum combo cadastrado para o dominio ativo.</div>';
+      return '<div class="eyebrow">Nenhum combo cadastrado para o domínio ativo.</div>';
     }
     return `
       <div class="grid-2">
@@ -90,7 +91,7 @@
           <article class="card panel">
             <div class="panel-head">
               <div>
-                <div class="eyebrow">${escapeHtml(c.codigo_combo)} | ${escapeHtml(c.dominio)}</div>
+                <div class="eyebrow">${escapeHtml(c.codigo_combo)} | ${escapeHtml(formatEnumLabel(c.dominio))}</div>
                 <h3 class="panel-title">${escapeHtml(c.nome)}</h3>
               </div>
               <div style="display:flex;gap:6px;">
@@ -105,7 +106,7 @@
               <div><div class="combo-metric-label">Original</div><div class="combo-metric-value">${escapeHtml(formatBrl(c.soma_original))}</div></div>
               <div><div class="combo-metric-label">Combo</div><div class="combo-metric-value" style="color:var(--accent-color);">${escapeHtml(formatBrl(c.preco_combo))}</div></div>
               <div><div class="combo-metric-label">Desconto</div><div class="combo-metric-value">${escapeHtml(formatBrl(c.desconto_real))}</div></div>
-              <div><div class="combo-metric-label">Margem Liq.</div><div class="combo-metric-value">${c.margem_liquida_pct}%</div></div>
+              <div><div class="combo-metric-label">Margem Líq.</div><div class="combo-metric-value">${c.margem_liquida_pct}%</div></div>
             </div>
           </article>
         `).join('')}
@@ -115,12 +116,12 @@
 
   function renderMovementsTable(movements) {
     if (movements.length === 0) {
-      return '<tr><td colspan="6" style="color:var(--text-secondary);">Sem movimentacoes registradas ainda.</td></tr>';
+      return '<tr><td colspan="6" style="color:var(--text-secondary);">Sem movimentações registradas ainda.</td></tr>';
     }
     return movements.map((m) => `
       <tr>
         <td class="mono">${escapeHtml(m.criado_em)}</td>
-        <td><span class="badge badge-accent">${escapeHtml(m.tipo_movimento)}</span></td>
+        <td><span class="badge badge-accent">${escapeHtml(formatEnumLabel(m.tipo_movimento))}</span></td>
         <td><strong>${escapeHtml(m.abreviacao_balcao)}</strong> <span class="mono" style="font-size:11px;">(${escapeHtml(m.codigo_sku)})</span></td>
         <td class="num">${m.quantidade > 0 ? `+${m.quantidade}` : m.quantidade} ${escapeHtml(m.unidade)}</td>
         <td class="num">${escapeHtml(formatBrl(m.cmp_anterior))} -&gt; <strong>${escapeHtml(formatBrl(m.cmp_novo))}</strong></td>
@@ -133,6 +134,7 @@
     if (!cachedCatalog) return;
     const { kpis, items, combos, recentMovements, scope } = cachedCatalog;
     const q = searchQuery.trim().toLowerCase();
+    container.innerHTML = '';
 
     const filteredItems = items.filter((it) => {
       if (it.tipo !== activeTab) return false;
@@ -153,7 +155,7 @@
         <div class="table-wrap">
           <table class="data-table">
             <thead>
-              <tr><th>Data</th><th>Tipo</th><th>Item</th><th class="num">Qtd</th><th class="num">Evolucao CMP</th><th>Observacao</th></tr>
+              <tr><th>Data</th><th>Tipo</th><th>Item</th><th class="num">Qtd</th><th class="num">Evolução CMP</th><th>Observação</th></tr>
             </thead>
             <tbody>${renderMovementsTable(recentMovements)}</tbody>
           </table>
@@ -167,10 +169,10 @@
               <tr>
                 <th>SKU</th>
                 <th>Item</th>
-                <th>${activeTab === 'SERVICO' ? 'Dominio / Garantia' : 'Dominio'}</th>
+                <th>${activeTab === 'SERVICO' ? 'Domínio / Garantia' : 'Domínio'}</th>
                 <th>${activeTab === 'SERVICO' ? 'Ficha BOM' : 'Estoque'}</th>
-                <th class="num">${activeTab === 'SERVICO' ? 'Preco / Liquido' : 'CMP / Valor'}</th>
-                <th style="text-align:right;">Acoes</th>
+                <th class="num">${activeTab === 'SERVICO' ? 'Preço / Líquido' : 'CMP / Valor'}</th>
+                <th style="text-align:right;">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -186,33 +188,33 @@
     container.innerHTML = `
       <div class="page-header">
         <div>
-          <div class="eyebrow">Catalogo Unificado | Filtro: ${escapeHtml(scope.activeFilter)}</div>
-          <h1 class="page-title">Servicos, Insumos BOM, Produtos &amp; Combos</h1>
-          <p class="page-subtitle">Custo Medio Ponderado em tempo real, ficha tecnica de consumo e pacotes promocionais de upsell.</p>
+          <div class="eyebrow">Catálogo Unificado | Filtro: ${escapeHtml(formatEnumLabel(scope.activeFilter))}</div>
+          <h1 class="page-title">Serviços, Insumos BOM, Produtos &amp; Combos</h1>
+          <p class="page-subtitle">Custo Médio Ponderado em tempo real, ficha técnica de consumo e pacotes promocionais de upsell.</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn" type="button" id="cat-new-insumo">+ Novo Insumo</button>
           <button class="btn" type="button" id="cat-new-produto">+ Novo Produto</button>
           <button class="btn" type="button" id="cat-new-combo">+ Novo Combo</button>
-          <button class="btn btn-accent" type="button" id="cat-new-servico">+ Novo Servico</button>
+          <button class="btn btn-accent" type="button" id="cat-new-servico">+ Novo Serviço</button>
         </div>
       </div>
 
       <div class="grid-kpis">
         <article class="card kpi-card">
-          <div class="kpi-top"><span class="eyebrow">Servicos</span><span class="led led-accent"></span></div>
+          <div class="kpi-top"><span class="eyebrow">Serviços</span><span class="led led-accent"></span></div>
           <div class="kpi-value mono">${kpis.totalServicos}</div>
-          <div class="kpi-hint">Com Ficha Tecnica BOM integrada</div>
+          <div class="kpi-hint">Com Ficha Técnica BOM integrada</div>
         </article>
         <article class="card kpi-card">
-          <div class="kpi-top"><span class="eyebrow">Produtos Balcao</span><span class="led led-blue"></span></div>
+          <div class="kpi-top"><span class="eyebrow">Produtos Balcão</span><span class="led led-blue"></span></div>
           <div class="kpi-value mono">${kpis.totalProdutos}</div>
           <div class="kpi-hint">Revenda PDV com margem calculada</div>
         </article>
         <article class="card kpi-card">
           <div class="kpi-top"><span class="eyebrow">Insumos &amp; Rupturas</span><span class="led ${kpis.rupturas > 0 ? 'led-red' : 'led-green'}"></span></div>
           <div class="kpi-value mono">${kpis.totalInsumos} / ${kpis.rupturas}</div>
-          <div class="kpi-hint">${kpis.rupturas} itens abaixo ou no minimo</div>
+          <div class="kpi-hint">${kpis.rupturas} itens abaixo ou no mínimo</div>
         </article>
         <article class="card kpi-card">
           <div class="kpi-top"><span class="eyebrow">Combos Ativos</span><span class="led led-green"></span></div>
@@ -222,25 +224,26 @@
       </div>
 
       <div class="subtabs" role="tablist">
-        <button class="subtab-btn ${activeTab === 'SERVICO' ? 'is-active' : ''}" type="button" data-cat-tab="SERVICO">Servicos &amp; BOM (${kpis.totalServicos})</button>
+        <button class="subtab-btn ${activeTab === 'SERVICO' ? 'is-active' : ''}" type="button" data-cat-tab="SERVICO">Serviços &amp; BOM (${kpis.totalServicos})</button>
         <button class="subtab-btn ${activeTab === 'INSUMO' ? 'is-active' : ''}" type="button" data-cat-tab="INSUMO">Insumos (${kpis.totalInsumos})</button>
         <button class="subtab-btn ${activeTab === 'PRODUTO' ? 'is-active' : ''}" type="button" data-cat-tab="PRODUTO">Produtos (${kpis.totalProdutos})</button>
         <button class="subtab-btn ${activeTab === 'COMBO' ? 'is-active' : ''}" type="button" data-cat-tab="COMBO">Combos (${kpis.totalCombos})</button>
-        <button class="subtab-btn ${activeTab === 'MOVIMENTOS' ? 'is-active' : ''}" type="button" data-cat-tab="MOVIMENTOS">Historico CMP</button>
+        <button class="subtab-btn ${activeTab === 'MOVIMENTOS' ? 'is-active' : ''}" type="button" data-cat-tab="MOVIMENTOS">Histórico CMP</button>
       </div>
 
       <section class="card panel">
         <div class="toolbar-row">
           <div class="toolbar-filters">
-            <input class="input" id="cat-search-input" type="search" value="${escapeHtml(searchQuery)}" placeholder="Filtrar por nome, abreviacao ou SKU..." style="max-width:340px;">
+            <input class="input" id="cat-search-input" type="search" value="${escapeHtml(searchQuery)}" placeholder="Filtrar por nome, abreviação ou SKU..." style="max-width:340px;">
           </div>
-          <span class="badge mono">${activeTab}</span>
+          <span class="badge mono">${escapeHtml(formatEnumLabel(activeTab))}</span>
         </div>
         ${bodySection}
       </section>
     `;
 
     bindEvents(container);
+    if (global.CTI_ICONS) global.CTI_ICONS.hydrateIcons(container);
   }
 
   function bindEvents(container) {

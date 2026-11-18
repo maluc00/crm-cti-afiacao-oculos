@@ -59,6 +59,36 @@
     };
   }
 
+  const ENUM_LABELS = {
+    OPTICA: 'Óptica',
+    CUTELARIA: 'Cutelaria',
+    AMBOS: 'Ambos',
+    GERAL: 'Geral',
+    SERVICO: 'Serviço',
+    PRODUTO: 'Produto',
+    INSUMO: 'Insumo',
+    COMBO: 'Combo',
+    ESPECIE: 'Espécie',
+    CARTAO_DEBITO: 'Cartão Débito',
+    CARTAO_CREDITO: 'Cartão Crédito',
+    AGUARDANDO_PECA: 'Aguardando Peça',
+    PADRAO: 'Padrão',
+    URGENTE: 'Urgente',
+    AGENDADO: 'Agendado',
+    ENTRADA_OS: 'Entrada OS',
+    ENTRADA_COMPRA: 'Entrada Compra',
+    AJUSTE_MANUAL: 'Ajuste Manual',
+    BAIXA_BOM: 'Baixa BOM',
+    VENDA_PDV: 'Venda PDV',
+    SUPRIMENTO: 'Suprimento',
+    ESTORNO: 'Estorno'
+  };
+
+  function formatEnumLabel(code) {
+    const key = String(code || '').trim();
+    return ENUM_LABELS[key] || key;
+  }
+
   function escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -69,8 +99,8 @@
   }
 
   /**
-   * Trava Poka-Yoke: impede que eventos de sincronizacao LAN fechem ou resetem
-   * formularios e modais enquanto o operador esta digitando ou editando.
+   * Trava Poka-Yoke: impede que eventos de sincronização LAN fechem ou resetem
+   * formulários e modais enquanto o operador está digitando ou editando.
    */
   function isInteractingWithModalOrForm() {
     if (state.modalOpen) return true;
@@ -127,11 +157,14 @@
     const mobIcon = document.getElementById('mobile-brand-icon');
 
     if (sideName) sideName.textContent = settings.brand_name || 'CTI Pro Oficina';
-    if (sideSlogan) sideSlogan.textContent = settings.brand_slogan || '';
+    if (sideSlogan) sideSlogan.textContent = settings.brand_slogan || 'Precisão Óptica & Cutelaria';
     if (mobName) mobName.textContent = settings.brand_name || 'CTI Pro';
 
-    const fallbackSvg = global.CTI_ICONS ? global.CTI_ICONS.BRAND_PRESETS[0].svg : '';
-    const svgHtml = settings.brand_icon_svg || fallbackSvg;
+    const customSvg = String(settings.brand_icon_svg || '').trim();
+    const autoSvg = global.CTI_ICONS
+      ? global.CTI_ICONS.getDefaultBrandSvgForMode(settings.operation_mode)
+      : '';
+    const svgHtml = customSvg || autoSvg;
     if (sideIcon) sideIcon.innerHTML = svgHtml;
     if (mobIcon) mobIcon.innerHTML = svgHtml;
     document.title = `${settings.brand_name || 'CTI Pro CRM'} - Oficina`;
@@ -217,7 +250,8 @@
         msg.type === 'settings:updated' ||
         msg.type === 'caixa:updated' ||
         msg.type === 'catalogo:updated' ||
-        msg.type === 'clientes:updated'
+        msg.type === 'clientes:updated' ||
+        msg.type === 'os:updated'
       ) {
         if (msg.originClientId === CLIENT_ID) {
           notify('ws:clients');
@@ -225,12 +259,12 @@
         }
         if (isInteractingWithModalOrForm()) {
           state.pendingRefresh = true;
-          showToast('Atualizacao recebida pela rede LAN. Sera aplicada ao concluir a edicao.', 'info');
+          showToast('Atualização recebida pela rede LAN. Será aplicada ao concluir a edição.', 'info');
           notify('ws:deferred');
           return;
         }
         await refreshOverview(`ws:${msg.type}`);
-        showToast('Configuracao sincronizada via rede local.', 'ok');
+        showToast('Configuração sincronizada via rede local.', 'ok');
         return;
       }
 
@@ -250,6 +284,7 @@
     state,
     roundMoney,
     formatBrl,
+    formatEnumLabel,
     computeLuminanceClient,
     escapeHtml,
     isInteractingWithModalOrForm,

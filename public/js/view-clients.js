@@ -9,13 +9,14 @@
   let activeScore = 'ALL';
   let cachedData = null;
 
-  async function loadAndRender(container) {
+  async function loadAndRender(container, canCommit) {
     const params = new URLSearchParams();
     if (queryText.trim()) params.set('q', queryText.trim());
     if (activeLetter !== 'ALL') params.set('letter', activeLetter);
     if (activeScore !== 'ALL') params.set('score', activeScore);
     const qs = params.toString() ? `?${params.toString()}` : '';
     cachedData = await apiFetch(`/api/clientes${qs}`);
+    if (canCommit && !canCommit()) return;
     renderMarkup(container);
   }
 
@@ -51,7 +52,7 @@
           <div style="font-size:10px;color:var(--text-secondary);">${cli.total_os} OSs</div>
         </td>
         <td class="action-cell">
-          <button class="btn btn-sm btn-accent" type="button" data-cli-dossier="${cli.id}">Prontuario</button>
+          <button class="btn btn-sm btn-accent" type="button" data-cli-dossier="${cli.id}">Prontuário</button>
           <button class="btn btn-sm" type="button" data-cli-edit="${cli.id}">Editar</button>
           <button class="btn btn-sm btn-ghost" type="button" data-cli-del="${cli.id}">Inativar</button>
         </td>
@@ -62,13 +63,14 @@
   function renderMarkup(container) {
     if (!cachedData) return;
     const { clients, kpis } = cachedData;
+    container.innerHTML = '';
 
     container.innerHTML = `
       <div class="page-header">
         <div>
-          <div class="eyebrow">Central CRM &amp; Avaliacao Hibrida (Scoring 1-5)</div>
-          <h1 class="page-title">Clientes &amp; Prontuario Tecnico</h1>
-          <p class="page-subtitle">Cadastro rapido em 5s, normalizacao E.164, historico de pecas, garantias e score automatico + manual.</p>
+          <div class="eyebrow">Central CRM &amp; Avaliação Híbrida (Scoring 1-5)</div>
+          <h1 class="page-title">Clientes &amp; Prontuário Técnico</h1>
+          <p class="page-subtitle">Cadastro rápido em 5s, normalização E.164, histórico de peças, garantias e score automático + manual.</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn" type="button" id="cli-recalc-all">Recalcular Scores</button>
@@ -88,14 +90,14 @@
           <div class="kpi-hint">Top LTV / Score 5 / Tag VIP</div>
         </article>
         <article class="card kpi-card">
-          <div class="kpi-top"><span class="eyebrow">Score Medio</span><span class="led led-blue"></span></div>
+          <div class="kpi-top"><span class="eyebrow">Score Médio</span><span class="led led-blue"></span></div>
           <div class="kpi-value mono">${Number(kpis.scoreMedio || 0).toFixed(2)}</div>
-          <div class="kpi-hint">Escala hibrida de 1 a 5 estrelas</div>
+          <div class="kpi-hint">Escala híbrida de 1 a 5 estrelas</div>
         </article>
         <article class="card kpi-card">
           <div class="kpi-top"><span class="eyebrow">LTV Acumulado</span><span class="led led-green"></span></div>
           <div class="kpi-value mono">${escapeHtml(formatBrl(kpis.ltvTotalCarteira))}</div>
-          <div class="kpi-hint">Auditado pelo livro-razao e OSs</div>
+          <div class="kpi-hint">Auditado pelo livro-razão e OSs</div>
         </article>
       </div>
 
@@ -114,7 +116,7 @@
           <span class="badge mono">${clients.length} exibidos</span>
         </div>
 
-        <div class="az-bar" aria-label="Indice alfabetico">
+        <div class="az-bar" aria-label="Índice alfabético">
           <button class="az-btn ${activeLetter === 'ALL' ? 'is-active' : ''}" type="button" data-az="ALL">Todos</button>
           ${ALPHABET.map((l) => `
             <button class="az-btn ${activeLetter === l ? 'is-active' : ''}" type="button" data-az="${l}">${l}</button>
@@ -125,12 +127,12 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>Cliente / Referencia</th>
+                <th>Cliente / Referência</th>
                 <th>WhatsApp (E.164)</th>
                 <th>Scoring</th>
                 <th>Flags de Perfil</th>
                 <th class="num">LTV / OSs</th>
-                <th style="text-align:right;">Acoes</th>
+                <th style="text-align:right;">Ações</th>
               </tr>
             </thead>
             <tbody>${renderClientRows(clients)}</tbody>
@@ -140,6 +142,7 @@
     `;
 
     bindEvents(container);
+    if (global.CTI_ICONS) global.CTI_ICONS.hydrateIcons(container);
   }
 
   function bindEvents(container) {

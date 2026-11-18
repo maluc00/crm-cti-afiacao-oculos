@@ -74,7 +74,7 @@ function configureLanPin(db, { enabled, regenerate, customPin }) {
   if (customPin !== undefined && String(customPin).trim() !== '') {
     const clean = String(customPin).trim();
     if (!/^\d{4,6}$/.test(clean)) {
-      const err = new Error('O PIN LAN deve conter entre 4 e 6 digitos numericos.');
+      const err = new Error('O PIN LAN deve conter entre 4 e 6 dígitos numéricos.');
       err.statusCode = 400;
       throw err;
     }

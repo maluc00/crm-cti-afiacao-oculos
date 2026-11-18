@@ -64,16 +64,23 @@ test('1. Integridade das tabelas do schema.sql e catalogo real do seed.sql', asy
 
   const requiredOptical = [
     'Mola', 'Hastes', 'Solda', 'Charneira', 'Ajuste',
-    'Parafuso', 'Adaptacao', 'Ponteiras', 'Plaquetas', 'Banho de Ouro'
+    'Parafuso', 'Adaptação', 'Ponteiras', 'Plaquetas', 'Banho de Ouro'
   ];
   for (const label of requiredOptical) {
-    assert.ok(opticalServices.includes(label), `Servico optico ausente no seed: ${label}`);
+    assert.ok(opticalServices.includes(label), `Serviço óptico ausente no seed: ${label}`);
   }
 
-  const cutleryCount = srv.db
-    .prepare("SELECT COUNT(*) AS c FROM catalogo_itens WHERE tipo = 'SERVICO' AND dominio = 'CUTELARIA'")
-    .get().c;
-  assert.ok(cutleryCount >= 5, 'Catalogo inicial de Cutelaria deve possuir ao menos 5 servicos');
+  const cutleryServices = srv.db
+    .prepare("SELECT abreviacao_balcao FROM catalogo_itens WHERE tipo = 'SERVICO' AND dominio = 'CUTELARIA'")
+    .all()
+    .map((r) => r.abreviacao_balcao);
+  assert.ok(cutleryServices.length >= 5, 'Catálogo inicial de Cutelaria deve possuir ao menos 5 serviços');
+  assert.ok(cutleryServices.includes('Afiação Alicate'));
+
+  const comboRev = srv.db
+    .prepare("SELECT abreviacao FROM combos WHERE codigo_combo = 'CMB-OPT-REV'")
+    .get();
+  assert.equal(comboRev.abreviacao, 'Revisão Óptica');
 });
 
 test('2. Triggers de imutabilidade em caixa_ledger e bloqueio de DELETE fisico', async (t) => {
@@ -201,13 +208,23 @@ test('3. Camaleao de Dominio (OPTICAL_ONLY / CUTLERY_ONLY / HYBRID) e Modo Parce
   assert.ok(overview.catalogItems.some((i) => i.dominio === 'OPTICA'));
   assert.ok(overview.catalogItems.some((i) => i.dominio === 'CUTELARIA'));
 
-  // Valor invalido deve ser barrado com HTTP 400
+  // Valor inválido deve ser barrado com HTTP 400
   res = await fetch(`${baseUrl}/api/settings`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ operation_mode: 'MODO_INVALIDO' })
   });
   assert.equal(res.status, 400);
+
+  // Ícone vazio ativa sincronização automática com Camaleão de Domínio
+  res = await fetch(`${baseUrl}/api/settings`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ brand_icon_svg: '' })
+  });
+  assert.equal(res.status, 200);
+  const emptySvgSettings = await res.json();
+  assert.equal(emptySvgSettings.brand_icon_svg, '');
 });
 
 test('4. Rotas de sistema, QR Code LAN, PIN, Caixa Rapido, WebSocket e Motor de Luminancia', async (t) => {
@@ -338,4 +355,14 @@ test('5. Governanca arquitetural: limite <= 600 linhas e zero emojis', () => {
       `Caractere pictografico/emoji proibido detectado em ${file.rel}`
     );
   }
+
+  // Hotfix Pré-Fase 4: limpeza de botões duplicados e atalho F2 para Caixa
+  const indexHtml = fs.readFileSync(path.join(ROOT_DIR, 'public', 'index.html'), 'utf8');
+  assert.equal(indexHtml.includes('id="sidebar-qr-btn"'), false, 'Botão LAN duplicado deve ser removido da sidebar');
+  assert.match(indexHtml, /data-route="caixa"[\s\S]*?<span class="kbd">F2<\/span>/, 'Caixa & Ledger deve exibir atalho F2');
+
+  const viewsShellJs = fs.readFileSync(path.join(ROOT_DIR, 'public', 'js', 'views-shell.js'), 'utf8');
+  assert.equal(viewsShellJs.includes('view-open-qr'), false, 'Botão Conectar Celular deve ser removido das páginas internas');
+  assert.equal(viewsShellJs.includes('view-go-settings'), false, 'Botão Ajustar Camaleão deve ser removido das sub-páginas');
+  assert.ok(viewsShellJs.includes('renderUpcomingPhaseView'), 'Roteador de fases futuras deve existir em views-shell.js');
 });

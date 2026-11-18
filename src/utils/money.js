@@ -6,13 +6,13 @@
 function roundMoney(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) {
-    throw new RangeError('Valor monetario invalido.');
+    throw new RangeError('Valor monetário inválido.');
   }
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }
 
 /**
- * Formata valor em Real Brasileiro (R$ 1.234,56) com espaco ASCII regular.
+ * Formata valor em Real Brasileiro (R$ 1.234,56) com espaço ASCII regular.
  */
 function formatBrl(value) {
   const rounded = roundMoney(value || 0);
@@ -25,8 +25,8 @@ function formatBrl(value) {
 }
 
 /**
- * Converte cor hex (#RGB ou #RRGGBB) e calcula luminancia Y = 0.299R + 0.587G + 0.114B.
- * Garante contraste WCAG AAA sobre botoes e badges de acento White-Label.
+ * Converte cor hex (#RGB ou #RRGGBB) e calcula luminância Y = 0.299R + 0.587G + 0.114B.
+ * Garante contraste WCAG AAA sobre botões e badges de acento White-Label.
  */
 function computeLuminance(hexColor) {
   if (typeof hexColor !== 'string') {
@@ -41,7 +41,7 @@ function computeLuminance(hexColor) {
   }
   const matchFull = /^#([0-9a-fA-F]{6})$/.exec(normalized);
   if (!matchFull) {
-    throw new RangeError(`Cor hexadecimal invalida: ${hexColor}`);
+    throw new RangeError(`Cor hexadecimal inválida: ${hexColor}`);
   }
   const hex = matchFull[1];
   const r = parseInt(hex.slice(0, 2), 16);

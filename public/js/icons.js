@@ -34,13 +34,24 @@
     chevronUp: `<svg ${SVG_ATTRS}><polyline points="18 15 12 9 6 15"/></svg>`,
     edit: `<svg ${SVG_ATTRS}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
     archive: `<svg ${SVG_ATTRS}><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>`,
-    arrowRight: `<svg ${SVG_ATTRS}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`
+    arrowRight: `<svg ${SVG_ATTRS}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
+    camera: `<svg ${SVG_ATTRS}><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+    printer: `<svg ${SVG_ATTRS}><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`,
+    kanban: `<svg ${SVG_ATTRS}><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="4" height="15" rx="1"/></svg>`,
+    list: `<svg ${SVG_ATTRS}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+    steps: `<svg ${SVG_ATTRS}><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><line x1="7" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="17" y2="12"/></svg>`,
+    pauseCircle: `<svg ${SVG_ATTRS}><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>`,
+    play: `<svg ${SVG_ATTRS}><polygon points="6 3 20 12 6 21 6 3"/></svg>`,
+    ban: `<svg ${SVG_ATTRS}><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>`,
+    zoomIn: `<svg ${SVG_ATTRS}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>`,
+    bolt: `<svg ${SVG_ATTRS}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    grid: `<svg ${SVG_ATTRS}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`
   };
 
   const BRAND_PRESETS = [
     {
       id: 'optical-caliper',
-      label: 'Calibrador Optico',
+      label: 'Calibrador Óptico',
       svg: `<svg ${SVG_ATTRS}><circle cx="7.5" cy="12" r="4"/><circle cx="16.5" cy="12" r="4"/><path d="M11.5 12h1"/><path d="M3.5 12H2"/><path d="M22 12h-1.5"/><path d="M7.5 8V6.5"/><path d="M16.5 8V6.5"/></svg>`
     },
     {
@@ -50,20 +61,26 @@
     },
     {
       id: 'hybrid-atelier',
-      label: 'Oficina Hibrida',
+      label: 'Oficina Híbrida',
       svg: `<svg ${SVG_ATTRS}><polygon points="12 2 21 7 21 17 12 22 3 17 3 7 12 2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 2v6.5"/><path d="M12 15.5V22"/></svg>`
     },
     {
       id: 'optical-prism',
-      label: 'Prisma Tecnico',
+      label: 'Prisma Técnico',
       svg: `<svg ${SVG_ATTRS}><polygon points="12 3 21 19 3 19 12 3"/><circle cx="12" cy="13.5" r="2.2"/></svg>`
     },
     {
       id: 'micro-gear',
-      label: 'Micrometro',
+      label: 'Micrômetro',
       svg: `<svg ${SVG_ATTRS}><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m4.9 4.9 2.1 2.1"/><path d="m17 17 2.1 2.1"/><path d="m19.1 4.9-2.1 2.1"/><path d="m7 17-2.1 2.1"/></svg>`
     }
   ];
+
+  function getDefaultBrandSvgForMode(operationMode) {
+    if (operationMode === 'OPTICAL_ONLY') return BRAND_PRESETS[0].svg;
+    if (operationMode === 'CUTLERY_ONLY') return BRAND_PRESETS[1].svg;
+    return BRAND_PRESETS[2].svg;
+  }
 
   function hydrateIcons(root = document) {
     const slots = root.querySelectorAll('[data-icon]');
@@ -82,6 +99,7 @@
   global.CTI_ICONS = {
     UI_ICONS,
     BRAND_PRESETS,
+    getDefaultBrandSvgForMode,
     hydrateIcons,
     icon
   };

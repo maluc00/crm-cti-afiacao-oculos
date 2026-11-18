@@ -1,0 +1,384 @@
+/* ==========================================================================
+   CTI PRO CRM - ESTILOS FASE 3 (OS ELASTICA F4, BANCADA VIVA, WEBP & TERMICA)
+   ========================================================================== */
+
+.modal-backdrop.is-blur-strong {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.modal-panel.modal-xl {
+  max-width: 880px;
+}
+
+/* Cabecalho Slim 38px do Check-in OS */
+.os-slim-header {
+  height: 38px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.os-slim-left,
+.os-slim-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.os-code-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-ring);
+}
+
+.seg-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-muted);
+  gap: 2px;
+}
+
+.seg-btn {
+  border: none;
+  background: transparent;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.seg-btn.is-active {
+  background-color: var(--bg-card);
+  color: var(--accent-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.warranty-alert-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-md);
+  background-color: rgba(217, 119, 6, 0.14);
+  border: 1px solid rgba(217, 119, 6, 0.36);
+  font-size: 12px;
+}
+
+.os-cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.os-cart-row {
+  display: grid;
+  grid-template-columns: 1fr 78px 94px 30px;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+}
+
+.os-fin-ruler {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tech-chip {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) ease;
+}
+
+.tech-chip.is-active {
+  background-color: var(--accent-soft);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* Lote Rapido Planilha */
+.batch-grid-row {
+  display: grid;
+  grid-template-columns: 2fr 70px 100px 130px 30px;
+  gap: 6px;
+  align-items: center;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+}
+
+/* Fotos WebP & Lightbox */
+.photo-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.photo-thumb-card {
+  position: relative;
+  width: 78px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  background-color: var(--bg-input);
+  cursor: pointer;
+}
+
+.photo-thumb-card img {
+  width: 100%;
+  height: 58px;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-thumb-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  padding: 2px 4px;
+  text-transform: uppercase;
+}
+
+.lightbox-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.lightbox-frame {
+  width: 100%;
+  max-height: 62vh;
+  overflow: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: #0A0A0C;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
+.lightbox-frame img {
+  max-width: 100%;
+  transition: transform var(--duration-spring) var(--ease-spring);
+  transform-origin: center center;
+}
+
+/* Bancada Viva: Kanban, Stepper & Checklist */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kanban-col {
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 260px;
+}
+
+.kanban-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.os-card {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-card);
+  box-shadow: var(--bezel-inset);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.os-card.is-urgent {
+  border-left: 3px solid var(--status-danger);
+}
+
+.stepper-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.stepper-node {
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.stepper-node.is-current {
+  background-color: var(--accent-soft);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.stepper-node.is-done {
+  border-color: rgba(22, 163, 74, 0.40);
+  color: var(--status-ok);
+}
+
+.lote-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-muted);
+}
+
+.lote-check-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-card);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.lote-check-pill.is-done {
+  border-color: var(--status-ok);
+  background-color: rgba(22, 163, 74, 0.12);
+  color: var(--status-ok);
+  text-decoration: line-through;
+}
+
+/* Motor de Impressao Termica */
+.ticket-preview-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 14px;
+  background-color: var(--bg-muted);
+  border-radius: var(--radius-md);
+}
+
+.ticket-sheet {
+  background-color: #FFFFFF;
+  color: #121316;
+  padding: 14px;
+  border: 1px solid #D4D4D8;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.ticket-sheet.fmt-80mm { width: 302px; }
+.ticket-sheet.fmt-58mm { width: 220px; font-size: 10px; }
+.ticket-sheet.fmt-50x30 { width: 230px; padding: 8px; font-size: 10px; }
+.ticket-sheet.fmt-a4 { width: 100%; max-width: 680px; padding: 24px; font-size: 12px; }
+
+.ticket-perforation {
+  margin: 12px 0;
+  border-top: 2px dashed #52525B;
+  text-align: center;
+  position: relative;
+}
+
+.ticket-perforation span {
+  position: relative;
+  top: -9px;
+  background: #FFFFFF;
+  padding: 0 6px;
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #52525B;
+}
+
+.ticket-qr-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.ticket-qr-box {
+  width: 84px;
+  text-align: center;
+  font-size: 9px;
+}
+
+.ticket-qr-box svg {
+  width: 78px;
+  height: 78px;
+}
+
+@media (max-width: 1120px) {
+  .kanban-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .kanban-board,
+  .stepper-track,
+  .batch-grid-row {
+    grid-template-columns: 1fr;
+  }
+  .os-cart-row {
+    grid-template-columns: 1fr 68px 80px 28px;
+  }
+}

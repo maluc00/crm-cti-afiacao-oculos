@@ -77,7 +77,7 @@ function formatClientRow(row, rules) {
 function listClients(db, filters = {}) {
   const rules = getAllSettings(db).scoring_rules;
   const rows = db
-    .prepare('SELECT * FROM clientes WHERE ativo = 1 ORDER BY nome COLLATE NOCASE ASC')
+    .prepare("SELECT * FROM clientes WHERE ativo = 1 AND telefone_e164 != '+5500000000000' ORDER BY nome COLLATE NOCASE ASC")
     .all();
 
   const allFormatted = rows.map((r) => formatClientRow(r, rules));
@@ -127,7 +127,7 @@ function saveClient(db, payload, id = null) {
     ? db.prepare('SELECT * FROM clientes WHERE id = ? AND ativo = 1').get(Number(id))
     : null;
   if (id && !existing) {
-    const err = new Error('Cliente nao encontrado.');
+    const err = new Error('Cliente não encontrado.');
     err.statusCode = 404;
     throw err;
   }
@@ -141,14 +141,14 @@ function saveClient(db, payload, id = null) {
     ? normalizePhoneE164(payload.telefone_e164 ?? payload.telefone)
     : existing?.telefone_e164;
   if (!telefoneE164) {
-    throw new ValidationError('Telefone/WhatsApp e obrigatorio.');
+    throw new ValidationError('Telefone/WhatsApp é obrigatório.');
   }
 
   const duplicate = db
     .prepare('SELECT id, ativo FROM clientes WHERE telefone_e164 = ? AND id != ?')
     .get(telefoneE164, existing ? existing.id : -1);
   if (duplicate && duplicate.ativo === 1) {
-    const err = new Error('Ja existe um cliente cadastrado com este WhatsApp/Telefone.');
+    const err = new Error('Já existe um cliente cadastrado com este WhatsApp/Telefone.');
     err.statusCode = 409;
     throw err;
   }
@@ -225,7 +225,7 @@ function saveClient(db, payload, id = null) {
 function updateClientEvaluation(db, id, payload) {
   const existing = db.prepare('SELECT * FROM clientes WHERE id = ? AND ativo = 1').get(Number(id));
   if (!existing) {
-    const err = new Error('Cliente nao encontrado.');
+    const err = new Error('Cliente não encontrado.');
     err.statusCode = 404;
     throw err;
   }
@@ -259,7 +259,7 @@ function updateClientEvaluation(db, id, payload) {
 function deactivateClient(db, id) {
   const existing = db.prepare('SELECT id FROM clientes WHERE id = ? AND ativo = 1').get(Number(id));
   if (!existing) {
-    const err = new Error('Cliente nao encontrado.');
+    const err = new Error('Cliente não encontrado.');
     err.statusCode = 404;
     throw err;
   }
@@ -270,7 +270,7 @@ function deactivateClient(db, id) {
 function getClientDossier(db, id) {
   const existing = db.prepare('SELECT id FROM clientes WHERE id = ? AND ativo = 1').get(Number(id));
   if (!existing) {
-    const err = new Error('Cliente nao encontrado.');
+    const err = new Error('Cliente não encontrado.');
     err.statusCode = 404;
     throw err;
   }

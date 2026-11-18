@@ -1,54 +1,21 @@
 (function attachShellViews(global) {
   'use strict';
 
-  const { state, formatBrl, escapeHtml } = global.CTI_STORE;
-
-  const ROUTE_DESCRIPTIONS = {
-    atendimento: {
-      eyebrow: 'Fase 1 Ativa | Fase 2 Spotlight de OS',
-      title: 'Atendimento & Balcao Express',
-      subtitle: 'Catalogo ativo filtrado em tempo real pelo Camaleao de Dominio e memoria de atributos.'
-    },
-    bancada: {
-      eyebrow: 'Fase 1 Ativa | Fase 3 Kanban SLA',
-      title: 'Bancada Tecnica & Producao',
-      subtitle: 'Visao operacional das filas tecnicas, atribuicao de bancada e controle de SLA.'
-    },
-    clientes: {
-      eyebrow: 'Fase 1 Ativa | Fase 4 CRM & Historico',
-      title: 'Clientes & Relacionamento',
-      subtitle: 'Base unificada por telefone E.164 com historico de OS, score e garantias.'
-    },
-    estoque: {
-      eyebrow: 'Fase 1 Ativa | Fase 3 BOM & CMP',
-      title: 'Catalogo, Ficha BOM & Estoque',
-      subtitle: 'Servicos, produtos de balcao e insumos filtrados conforme o modo da oficina.'
-    },
-    caixa: {
-      eyebrow: 'Fase 1 Ativa | Fase 5 Ledger Imutavel',
-      title: 'Caixa Diario & Livro-Razao',
-      subtitle: 'Abertura de turno, saldo em especie e lancamentos protegidos por triggers SQLite.'
-    },
-    bi: {
-      eyebrow: 'Fase 1 Ativa | Fase 6 BI & Legado',
-      title: 'BI & Indicadores Executivos',
-      subtitle: 'Metas, estrutura de custos fixos e comparativo multi-anual isolados por dominio.'
-    }
-  };
+  const { state, formatBrl, formatEnumLabel, escapeHtml } = global.CTI_STORE;
 
   function renderCatalogRows(items) {
     if (!items || items.length === 0) {
-      return '<tr><td colspan="5" style="color:var(--text-secondary);">Nenhum item ativo para o dominio atual.</td></tr>';
+      return '<tr><td colspan="5" style="color:var(--text-secondary);">Nenhum item ativo para o domínio atual.</td></tr>';
     }
-    return items.slice(0, 14).map((item) => `
+    return items.map((item) => `
       <tr>
         <td class="mono">${escapeHtml(item.codigo_sku)}</td>
         <td>
           <strong>${escapeHtml(item.abreviacao_balcao)}</strong>
           <div style="font-size:11px;color:var(--text-secondary);">${escapeHtml(item.nome_tecnico)}</div>
         </td>
-        <td><span class="badge">${escapeHtml(item.tipo)}</span></td>
-        <td><span class="badge badge-accent">${escapeHtml(item.dominio)}</span></td>
+        <td><span class="badge">${escapeHtml(formatEnumLabel(item.tipo))}</span></td>
+        <td><span class="badge badge-accent">${escapeHtml(formatEnumLabel(item.dominio))}</span></td>
         <td class="num">${escapeHtml(formatBrl(item.preco_venda))}</td>
       </tr>
     `).join('');
@@ -94,7 +61,7 @@
         <div class="panel-head">
           <div>
             <div class="eyebrow">Modo Parceiros Ativo</div>
-            <h2 class="panel-title">Tecnicos Habilitados &amp; Regras de Comissao</h2>
+            <h2 class="panel-title">Técnicos Habilitados &amp; Regras de Comissão</h2>
           </div>
           <span class="badge badge-accent">${overview.partners.length} ativos</span>
         </div>
@@ -102,7 +69,7 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>Tecnico</th>
+                <th>Técnico</th>
                 <th>Perfil</th>
                 <th>Regra JSON</th>
               </tr>
@@ -122,68 +89,26 @@
     `;
   }
 
-  function renderLedgerCard(overview) {
-    const rows = overview.recentLedger || [];
-    return `
-      <section class="card panel" style="margin-top:16px;">
-        <div class="panel-head">
-          <div>
-            <div class="eyebrow">Auditoria em Tempo Real</div>
-            <h2 class="panel-title">Livro-Razao Imutavel (caixa_ledger)</h2>
-          </div>
-          <button class="btn btn-sm btn-accent" type="button" id="view-open-cash-btn">Gerenciar Turno</button>
-        </div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Movimento</th>
-                <th>Meio</th>
-                <th>Descricao</th>
-                <th class="num">Liquido</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows.length === 0
-                ? '<tr><td colspan="5" style="color:var(--text-secondary);">Sem movimentacoes registradas no caixa ainda.</td></tr>'
-                : rows.map((r) => `
-                  <tr>
-                    <td class="mono">${escapeHtml(r.data_competencia)}</td>
-                    <td><span class="badge">${escapeHtml(r.tipo_movimento)}</span></td>
-                    <td><span class="badge badge-accent">${escapeHtml(r.meio_pagamento)}</span></td>
-                    <td>${escapeHtml(r.descricao)}</td>
-                    <td class="num">${escapeHtml(formatBrl(r.valor_liquido))}</td>
-                  </tr>
-                `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderOperationalView(container, route) {
+  function renderOperationalView(container) {
     const overview = state.overview;
     if (!overview) return;
-    const meta = ROUTE_DESCRIPTIONS[route] || ROUTE_DESCRIPTIONS.atendimento;
-    const { kpis, scope, settings } = overview;
+    container.innerHTML = '';
 
+    const { kpis, scope, settings } = overview;
     const services = overview.catalogItems.filter((i) => i.tipo === 'SERVICO');
-    const stockItems = overview.catalogItems.filter((i) => i.tipo !== 'SERVICO');
-    const activeItems = route === 'estoque' ? stockItems : services;
-    const preClient = route === 'atendimento' ? state.preselectedClientForOs : null;
+    const preClient = state.preselectedClientForOs;
 
     container.innerHTML = `
       <div class="page-header">
         <div>
-          <div class="eyebrow">${escapeHtml(meta.eyebrow)}</div>
-          <h1 class="page-title">${escapeHtml(meta.title)}</h1>
-          <p class="page-subtitle">${escapeHtml(meta.subtitle)}</p>
+          <div class="eyebrow">Check-in Ágil de Balcão | Filtro: ${escapeHtml(formatEnumLabel(scope.activeFilter))}</div>
+          <h1 class="page-title">Atendimento &amp; Balcão Express</h1>
+          <p class="page-subtitle">Catálogo ativo filtrado em tempo real pelo Camaleão de Domínio e memória de atributos.</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn" type="button" id="view-go-settings">Ajustar Camaleao</button>
-          <button class="btn btn-accent" type="button" id="view-open-qr">Conectar Celular</button>
+          <button class="btn btn-accent" type="button" id="view-open-os-express">+ Nova OS (F4)</button>
+          <button class="btn" type="button" id="view-open-os-completo">Perícia Completa</button>
+          <button class="btn" type="button" id="view-open-os-lote">Lote Rápido</button>
         </div>
       </div>
 
@@ -191,13 +116,16 @@
         <div class="card panel" style="margin-bottom:16px;border-color:var(--accent-color);background-color:var(--accent-soft);">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
             <div>
-              <div class="eyebrow">Cliente Pre-Selecionado do Prontuario (Pronto para Abertura de OS)</div>
+              <div class="eyebrow">Cliente Pré-Selecionado do Prontuário (Pronto para Abertura de OS)</div>
               <div style="font-size:15px;font-weight:700;margin-top:3px;">
                 ${escapeHtml(preClient.nome)}
                 <span class="mono" style="font-size:12px;font-weight:400;margin-left:8px;">${escapeHtml(preClient.telefone_formatado)}</span>
               </div>
             </div>
-            <button class="btn btn-sm" type="button" id="view-clear-preclient">Limpar Selecao</button>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-accent" type="button" id="view-start-os-preclient">+ Abrir OS Agora</button>
+              <button class="btn btn-sm" type="button" id="view-clear-preclient">Limpar Seleção</button>
+            </div>
           </div>
         </div>
       ` : ''}
@@ -205,11 +133,11 @@
       <div class="grid-kpis">
         <article class="card kpi-card">
           <div class="kpi-top">
-            <span class="eyebrow">Servicos Ativos</span>
+            <span class="eyebrow">Serviços Ativos</span>
             <span class="led led-accent"></span>
           </div>
           <div class="kpi-value mono">${kpis.servicesCount}</div>
-          <div class="kpi-hint">Filtro: ${escapeHtml(scope.activeFilter)} (${escapeHtml(settings.operation_mode)})</div>
+          <div class="kpi-hint">Filtro: ${escapeHtml(formatEnumLabel(scope.activeFilter))} (${escapeHtml(settings.operation_mode)})</div>
         </article>
         <article class="card kpi-card">
           <div class="kpi-top">
@@ -217,7 +145,7 @@
             <span class="led ${kpis.stockAlerts > 0 ? 'led-amber' : 'led-green'}"></span>
           </div>
           <div class="kpi-value mono">${kpis.productsCount + kpis.insumosCount}</div>
-          <div class="kpi-hint">${kpis.stockAlerts} itens em alerta minimo</div>
+          <div class="kpi-hint">${kpis.stockAlerts} itens em alerta mínimo</div>
         </article>
         <article class="card kpi-card">
           <div class="kpi-top">
@@ -241,10 +169,10 @@
         <section class="card panel">
           <div class="panel-head">
             <div>
-              <div class="eyebrow">Catalogo Homologado</div>
-              <h2 class="panel-title">${route === 'estoque' ? 'Produtos & Insumos BOM' : 'Tabela de Servicos Ativa'}</h2>
+              <div class="eyebrow">Catálogo Homologado</div>
+              <h2 class="panel-title">Tabela de Serviços Ativa</h2>
             </div>
-            <span class="badge badge-accent mono">${activeItems.length} itens</span>
+            <span class="badge badge-accent mono">${services.length} itens</span>
           </div>
           <div class="table-wrap">
             <table class="data-table">
@@ -253,11 +181,11 @@
                   <th>SKU</th>
                   <th>Item</th>
                   <th>Tipo</th>
-                  <th>Dominio</th>
+                  <th>Domínio</th>
                   <th class="num">Valor</th>
                 </tr>
               </thead>
-              <tbody>${renderCatalogRows(activeItems)}</tbody>
+              <tbody>${renderCatalogRows(services)}</tbody>
             </table>
           </div>
         </section>
@@ -265,8 +193,8 @@
         <section class="card panel">
           <div class="panel-head">
             <div>
-              <div class="eyebrow">Memoria Spotlight</div>
-              <h2 class="panel-title">Atributos &amp; Combos Disponiveis</h2>
+              <div class="eyebrow">Memória Spotlight</div>
+              <h2 class="panel-title">Atributos &amp; Combos Disponíveis</h2>
             </div>
             <span class="badge mono">${overview.combos.length} combos</span>
           </div>
@@ -278,36 +206,92 @@
                 <div class="switch-row">
                   <div>
                     <div style="font-size:12px;font-weight:700;">${escapeHtml(c.nome)}</div>
-                    <div class="eyebrow">${escapeHtml(c.dominio)} | Economia ${escapeHtml(formatBrl(c.economia_gerada))}</div>
+                    <div class="eyebrow">${escapeHtml(formatEnumLabel(c.dominio))} | Economia ${escapeHtml(formatBrl(c.economia_gerada))}</div>
                   </div>
                   <div class="mono" style="font-weight:700;">${escapeHtml(formatBrl(c.preco_combo))}</div>
                 </div>
-              `).join('') || '<div class="eyebrow">Nenhum combo para este dominio.</div>'}
+              `).join('') || '<div class="eyebrow">Nenhum combo para este domínio.</div>'}
             </div>
           </div>
         </section>
       </div>
 
       ${renderPartnersCard(overview)}
-      ${route === 'caixa' || route === 'bi' ? renderLedgerCard(overview) : ''}
     `;
 
-    document.getElementById('view-go-settings').addEventListener('click', () => global.CTI_APP.navigate('configuracoes'));
-    document.getElementById('view-open-qr').addEventListener('click', () => global.CTI_MODALS.openLanQrModal());
+    document.getElementById('view-open-os-express')?.addEventListener('click', () =>
+      global.CTI_MODAL_OS_CHECKIN.openOsCheckinModal({ modo: 'EXPRESS', onCreated: () => renderOperationalView(container) })
+    );
+    document.getElementById('view-open-os-completo')?.addEventListener('click', () =>
+      global.CTI_MODAL_OS_CHECKIN.openOsCheckinModal({ modo: 'COMPLETO', onCreated: () => renderOperationalView(container) })
+    );
+    document.getElementById('view-open-os-lote')?.addEventListener('click', () =>
+      global.CTI_MODAL_OS_CHECKIN.openOsCheckinModal({ modo: 'LOTE', onCreated: () => renderOperationalView(container) })
+    );
+    document.getElementById('view-start-os-preclient')?.addEventListener('click', () =>
+      global.CTI_MODAL_OS_CHECKIN.openOsCheckinModal({ modo: 'COMPLETO', cliente: preClient, onCreated: () => renderOperationalView(container) })
+    );
     const clearPreBtn = document.getElementById('view-clear-preclient');
     if (clearPreBtn) {
       clearPreBtn.addEventListener('click', () => {
         state.preselectedClientForOs = null;
-        renderOperationalView(container, route);
+        renderOperationalView(container);
       });
-    }
-    const openCashBtn = document.getElementById('view-open-cash-btn');
-    if (openCashBtn) {
-      openCashBtn.addEventListener('click', () => global.CTI_MODALS.openCashSemaphoreModal());
     }
   }
 
+  function renderUpcomingPhaseView(container, route) {
+    container.innerHTML = '';
+    const isCaixa = route === 'caixa';
+    const meta = isCaixa
+      ? {
+          eyebrow: 'Financeiro & Livro-Razão | Atalho F2',
+          title: 'Caixa & Ledger',
+          subtitle: 'Abertura, fechamento cego em espécie, conciliação de taxas e livro-razão imutável.',
+          badge: 'Implementação prevista para a Fase 4',
+          heading: 'Módulo estruturado no banco de dados — Implementação prevista para a Fase 4',
+          description: 'As tabelas caixa_sessoes e caixa_ledger (protegidas pelas triggers imutáveis trg_ledger_block_update e trg_ledger_block_delete) já registram entradas de OS, sinais e abertura rápida de turno. O painel dedicado de PDV, sangria, suprimento, conciliação de cartões e fechamento cego será entregue na Fase 4.'
+        }
+      : {
+          eyebrow: 'Inteligência Gerencial & Histórico',
+          title: 'BI & Indicadores',
+          subtitle: 'Comparativo multi-anual (YoY), margem de contribuição, ponto de equilíbrio e importação Excel.',
+          badge: 'Implementação prevista para a Fase 5',
+          heading: 'Módulo estruturado no banco de dados — Implementação prevista para a Fase 5',
+          description: 'A estrutura de historico_consolidado_legado, metas mensais (monthly_goals_json) e custos fixos (fixed_costs_json) já está homologada no banco central SQLite. Os painéis executivos YoY, PA, QNT, ponto de equilíbrio e importação de planilhas históricas serão entregues na próxima etapa de BI.'
+        };
+
+    container.innerHTML = `
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">${escapeHtml(meta.eyebrow)}</div>
+          <h1 class="page-title">${escapeHtml(meta.title)}</h1>
+          <p class="page-subtitle">${escapeHtml(meta.subtitle)}</p>
+        </div>
+        <span class="badge badge-accent">${escapeHtml(meta.badge)}</span>
+      </div>
+
+      <section class="card panel" style="max-width:780px;">
+        <div class="eyebrow" style="margin-bottom:6px;">Arquitetura Pronta no SQLite | Próxima Fase</div>
+        <h2 class="panel-title" style="font-size:17px;margin-bottom:10px;">${escapeHtml(meta.heading)}</h2>
+        <p class="page-subtitle" style="line-height:1.65;margin-bottom:18px;">${escapeHtml(meta.description)}</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          ${isCaixa ? '<button class="btn btn-accent" type="button" id="upcoming-open-cash">Gerenciar Turno Rápido</button>' : ''}
+          <button class="btn" type="button" id="upcoming-go-home">Voltar para Atendimento &amp; OS</button>
+        </div>
+      </section>
+    `;
+
+    document.getElementById('upcoming-open-cash')?.addEventListener('click', () =>
+      global.CTI_MODALS.openCashSemaphoreModal()
+    );
+    document.getElementById('upcoming-go-home')?.addEventListener('click', () =>
+      global.CTI_APP.navigate('atendimento')
+    );
+  }
+
   global.CTI_VIEWS_SHELL = {
-    renderOperationalView
+    renderOperationalView,
+    renderUpcomingPhaseView
   };
 })(window);

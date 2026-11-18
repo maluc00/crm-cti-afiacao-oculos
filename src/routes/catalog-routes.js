@@ -21,7 +21,7 @@ function handleRouteError(err, res, next) {
     return res.status(404).json({ error: err.message });
   }
   if (String(err.message || '').includes('UNIQUE constraint failed')) {
-    return res.status(409).json({ error: 'Codigo SKU ou identificador ja cadastrado.' });
+    return res.status(409).json({ error: 'Código SKU ou identificador já cadastrado.' });
   }
   return next(err);
 }

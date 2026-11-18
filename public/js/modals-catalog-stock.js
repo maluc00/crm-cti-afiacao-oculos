@@ -34,8 +34,8 @@
         </div>
 
         <div class="field">
-          <label for="cmp-obs">Observacao / Nota Fiscal</label>
-          <input class="input" id="cmp-obs" type="text" placeholder="Ex: NF 4521 - Reposicao fornecedor">
+          <label for="cmp-obs">Observação / Nota Fiscal</label>
+          <input class="input" id="cmp-obs" type="text" placeholder="Ex: NF 4521 - Reposição fornecedor">
         </div>
 
         <div class="combo-summary-strip" id="cmp-preview-strip"></div>
@@ -47,7 +47,7 @@
       </form>
     `;
 
-    openModal('Entrada de Compra & Recalculo CMP', html);
+    openModal('Entrada de Compra & Recálculo CMP', html);
     document.getElementById('cmp-cancel').addEventListener('click', closeModal);
 
     const qtyEl = document.getElementById('cmp-qty');
@@ -111,8 +111,8 @@
           <input class="input mono" id="adj-qty" type="number" min="0" step="0.01" value="${item.estoque_atual}" required>
         </div>
         <div class="field">
-          <label for="adj-motivo">Motivo Obrigatorio (Auditoria)</label>
-          <input class="input" id="adj-motivo" type="text" minlength="3" required placeholder="Ex: Conferencia fisica semanal / Peca avariada">
+          <label for="adj-motivo">Motivo Obrigatório (Auditoria)</label>
+          <input class="input" id="adj-motivo" type="text" minlength="3" required placeholder="Ex: Conferência física semanal / Peça avariada">
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
           <button class="btn" type="button" id="adj-cancel">Cancelar</button>
@@ -120,7 +120,7 @@
         </div>
       </form>
     `;
-    openModal('Ajuste Manual de Inventario', html);
+    openModal('Ajuste Manual de Inventário', html);
     document.getElementById('adj-cancel').addEventListener('click', closeModal);
     document.getElementById('adj-stock-form').addEventListener('submit', async (ev) => {
       ev.preventDefault();
@@ -134,7 +134,7 @@
           })
         });
         await closeModal();
-        showToast('Ajuste de inventario auditado.', 'ok');
+        showToast('Ajuste de inventário auditado.', 'ok');
         if (onSaved) onSaved();
       } catch (err) {
         showToast(err.message, 'error');
@@ -164,25 +164,25 @@
             <input class="input" id="cmb-nome" type="text" required value="${escapeHtml(existing?.nome || '')}">
           </div>
           <div class="field">
-            <label for="cmb-abrev">Abreviacao de Balcao</label>
+            <label for="cmb-abrev">Abreviação de Balcão</label>
             <input class="input" id="cmb-abrev" type="text" required value="${escapeHtml(existing?.abreviacao || '')}">
           </div>
         </div>
         <div class="field-grid">
           <div class="field">
-            <label for="cmb-dom">Dominio</label>
+            <label for="cmb-dom">Domínio</label>
             <select class="select" id="cmb-dom">
-              ${domains.map((d) => `<option value="${d}" ${currentDomain === d ? 'selected' : ''}>${d}</option>`).join('')}
+              ${domains.map((d) => `<option value="${d}" ${currentDomain === d ? 'selected' : ''}>${escapeHtml(global.CTI_STORE.formatEnumLabel(d))}</option>`).join('')}
             </select>
           </div>
           <div class="field">
-            <label for="cmb-preco">Preco Promocional do Combo (R$)</label>
+            <label for="cmb-preco">Preço Promocional do Combo (R$)</label>
             <input class="input mono" id="cmb-preco" type="number" min="0" step="0.01" required value="${Number(existing?.preco_combo ?? 0).toFixed(2)}">
           </div>
         </div>
 
         <div class="field">
-          <label>Composicao do Combo (Servicos + Produtos)</label>
+          <label>Composição do Combo (Serviços + Produtos)</label>
           <div id="cmb-spotlight"></div>
           <div class="line-builder-list" id="cmb-lines"></div>
         </div>
@@ -215,19 +215,19 @@
         <div><div class="combo-metric-label">Soma Original</div><div class="combo-metric-value">${escapeHtml(formatBrl(somaOrig))}</div></div>
         <div><div class="combo-metric-label">Desconto Real</div><div class="combo-metric-value">${escapeHtml(formatBrl(desconto))}</div></div>
         <div><div class="combo-metric-label">Custo Embutido</div><div class="combo-metric-value">${escapeHtml(formatBrl(custoTot))}</div></div>
-        <div><div class="combo-metric-label">Margem Liquida</div><div class="combo-metric-value" style="color:var(--accent-color);">${escapeHtml(formatBrl(lucroLiq))} (${margem.toFixed(1)}%)</div></div>
+        <div><div class="combo-metric-label">Margem Líquida</div><div class="combo-metric-value" style="color:var(--accent-color);">${escapeHtml(formatBrl(lucroLiq))} (${margem.toFixed(1)}%)</div></div>
       `;
     }
 
     function renderLines() {
       if (lines.length === 0) {
-        linesEl.innerHTML = '<div class="eyebrow">Adicione servicos ou produtos pelo buscador acima.</div>';
+        linesEl.innerHTML = '<div class="eyebrow">Adicione serviços ou produtos pelo buscador acima.</div>';
       } else {
         linesEl.innerHTML = lines.map((l, idx) => `
           <div class="line-builder-row">
             <div>
               <div style="font-size:12px;font-weight:700;">${escapeHtml(l.label)}</div>
-              <div class="eyebrow">${escapeHtml(l.tipo)} | Unit: ${escapeHtml(formatBrl(l.preco))} | Custo: ${escapeHtml(formatBrl(l.custo))}</div>
+              <div class="eyebrow">${escapeHtml(global.CTI_STORE.formatEnumLabel(l.tipo))} | Unit: ${escapeHtml(formatBrl(l.preco))} | Custo: ${escapeHtml(formatBrl(l.custo))}</div>
             </div>
             <input class="input mono" type="number" min="1" step="1" value="${l.quantidade}" data-cmb-qty="${idx}">
             <div class="mono line-cost-col" style="text-align:right;font-size:12px;">${escapeHtml(formatBrl(l.preco * l.quantidade))}</div>
@@ -255,12 +255,12 @@
       items: eligibleItems.map((it) => ({
         id: it.id,
         label: it.abreviacao_balcao,
-        sublabel: `${it.tipo} | ${it.nome_tecnico}`,
+        sublabel: `${global.CTI_STORE.formatEnumLabel(it.tipo)} | ${it.nome_tecnico}`,
         meta: formatBrl(it.preco_venda),
         freq: it.frequencia_uso,
         raw: it
       })),
-      placeholder: 'Adicionar servico ou produto ao combo...',
+      placeholder: 'Adicionar serviço ou produto ao combo...',
       clearOnSelect: true,
       onSelect(opt) {
         const found = lines.find((l) => l.item_id === opt.id);
