@@ -1,0 +1,305 @@
+/* ==========================================================================
+   CTI PRO CRM - DESIGN SYSTEM INDUSTRIAL HOMOLOGADO
+   Tipografia: Sora (UI) + JetBrains Mono (Numeros Tabulares)
+   Acabamento: Double-Bezel | Apple Spring (320ms) | 3 Superficies + WCAG AAA
+   ========================================================================== */
+
+:root {
+  --font-ui: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-spring: 320ms;
+  --duration-fast: 140ms;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-pill: 999px;
+
+  --accent-color: #B45309;
+  --accent-contrast: #FFFFFF;
+  --accent-ring: rgba(180, 83, 9, 0.16);
+  --accent-soft: rgba(180, 83, 9, 0.10);
+
+  --status-ok: #16A34A;
+  --status-warn: #D97706;
+  --status-danger: #DC2626;
+  --status-info: #2563EB;
+
+  --sidebar-width: 252px;
+  --topbar-height: 62px;
+  --hud-height: 36px;
+}
+
+/* Superficie 1: Warm Atelier (Claro Padrao) */
+:root,
+[data-theme="warm-atelier"] {
+  --bg-canvas: #F8F6F0;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #FDFBF7;
+  --bg-muted: #EFEBE2;
+  --bg-input: #FAF8F3;
+  --border-subtle: #E5E0D8;
+  --border-strong: #CFC7BA;
+  --text-primary: #2D2824;
+  --text-secondary: #6E675F;
+  --text-tertiary: #8B8379;
+  --bezel-inset: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --shadow-card: 0 1px 2px rgba(45, 40, 36, 0.05), 0 10px 24px -18px rgba(45, 40, 36, 0.16);
+  --shadow-modal: 0 24px 48px -18px rgba(24, 20, 16, 0.28);
+  --backdrop-rgba: rgba(29, 25, 21, 0.42);
+}
+
+/* Superficie 2: Titanium Dark (Escuro Padrao) */
+[data-theme="titanium-dark"] {
+  --bg-canvas: #131418;
+  --bg-card: #1A1B21;
+  --bg-elevated: #22242C;
+  --bg-muted: #252730;
+  --bg-input: #14151A;
+  --border-subtle: #2E3039;
+  --border-strong: #414452;
+  --text-primary: #F4F4F6;
+  --text-secondary: #9A9DA8;
+  --text-tertiary: #757987;
+  --bezel-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.35), 0 14px 28px -18px rgba(0, 0, 0, 0.65);
+  --shadow-modal: 0 28px 60px -16px rgba(0, 0, 0, 0.78);
+  --backdrop-rgba: rgba(5, 6, 8, 0.68);
+}
+
+/* Superficie 3A: Modo Foco F8 sobre Warm Atelier (Pergaminho Grafite Desaturado) */
+[data-theme="warm-atelier"][data-focus="true"] {
+  --bg-canvas: #F4F3EE;
+  --bg-card: #FAF9F5;
+  --bg-elevated: #FFFFFF;
+  --bg-muted: #EAE8E1;
+  --bg-input: #F5F4EF;
+  --border-subtle: #DFDDD4;
+}
+
+/* Superficie 3B: Modo Foco F8 sobre Titanium Dark (Preto Absoluto OLED) */
+[data-theme="titanium-dark"][data-focus="true"] {
+  --bg-canvas: #000000;
+  --bg-card: #0A0A0C;
+  --bg-elevated: #111115;
+  --bg-muted: #141419;
+  --bg-input: #050507;
+  --border-subtle: #1D1E25;
+  --border-strong: #2E303B;
+  --text-primary: #FDFBF7;
+  --text-secondary: #A5A39D;
+  --bezel-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--duration-spring) var(--ease-spring),
+              color var(--duration-spring) var(--ease-spring);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Tipografia Tecnica e Tabular */
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Acabamento Double-Bezel */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bezel-inset), var(--shadow-card);
+  transition: transform var(--duration-spring) var(--ease-spring),
+              border-color var(--duration-fast) ease,
+              background-color var(--duration-spring) var(--ease-spring),
+              box-shadow var(--duration-spring) var(--ease-spring);
+}
+
+.card-interactive:hover {
+  border-color: var(--border-strong);
+}
+
+.card-interactive:active {
+  transform: scale(0.985);
+}
+
+/* Botoes Industriais com Fisica Spring */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--bezel-inset);
+  transition: transform var(--duration-spring) var(--ease-spring),
+              background-color var(--duration-fast) ease,
+              border-color var(--duration-fast) ease,
+              box-shadow var(--duration-fast) ease;
+}
+
+.btn:hover {
+  border-color: var(--border-strong);
+  background-color: var(--bg-elevated);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:focus-visible,
+.input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.btn-accent {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--accent-contrast);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  filter: brightness(1.06);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background-color: var(--bg-muted);
+  border-color: transparent;
+}
+
+.btn-sm {
+  height: 30px;
+  padding: 0 10px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+
+/* Micro-LEDs Geometricos CSS (6px) */
+.led {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.led-green {
+  background-color: var(--status-ok);
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.72);
+}
+
+.led-amber {
+  background-color: var(--status-warn);
+  box-shadow: 0 0 8px rgba(217, 119, 6, 0.72);
+}
+
+.led-red {
+  background-color: var(--status-danger);
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.72);
+}
+
+.led-blue {
+  background-color: var(--status-info);
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.65);
+}
+
+.led-accent {
+  background-color: var(--accent-color);
+  box-shadow: 0 0 8px var(--accent-ring);
+}
+
+/* Icones SVG Vetoriais */
+.icon {
+  width: 17px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+.hidden {
+  display: none !important;
+}

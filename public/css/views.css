@@ -1,0 +1,420 @@
+/* ==========================================================================
+   CTI PRO CRM - ESTILOS DE VIEWS, WHITE-LABEL E COMPONENTES OPERACIONAIS
+   ========================================================================== */
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.page-title {
+  margin: 4px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.grid-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.kpi-card {
+  padding: 16px 18px;
+}
+
+.kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kpi-value {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.kpi-hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.panel {
+  padding: 18px 20px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.panel-title {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Formularios & Inputs */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  font-size: 13px;
+  transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+.textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+/* Seletor de Modo da Oficina & Superficies */
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--duration-spring) var(--ease-spring),
+              border-color var(--duration-fast) ease,
+              background-color var(--duration-fast) ease;
+}
+
+.choice-card:hover {
+  border-color: var(--border-strong);
+}
+
+.choice-card:active {
+  transform: scale(0.97);
+}
+
+.choice-card.is-selected {
+  border-color: var(--accent-color);
+  background-color: var(--accent-soft);
+  box-shadow: 0 0 0 2px var(--accent-ring);
+}
+
+.choice-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.choice-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Switch Booleano Industrial */
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+}
+
+.switch-btn {
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-muted);
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease;
+}
+
+.switch-btn::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform var(--duration-spring) var(--ease-spring);
+}
+
+.switch-btn[aria-checked="true"] {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.switch-btn[aria-checked="true"]::after {
+  transform: translateX(20px);
+}
+
+/* Estudio de Cor & Icones White-Label */
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform var(--duration-spring) var(--ease-spring);
+}
+
+.swatch:hover {
+  transform: scale(1.08);
+}
+
+.swatch.is-active {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.luminance-meter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-muted);
+  font-size: 12px;
+}
+
+.icon-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.icon-preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.icon-preset-btn.is-selected {
+  border-color: var(--accent-color);
+  background-color: var(--accent-soft);
+  color: var(--accent-color);
+}
+
+.icon-preset-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Tabelas & Chips */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+table.data-table th {
+  text-align: left;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+table.data-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+table.data-table td.num,
+table.data-table th.num {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+.badge-accent {
+  background-color: var(--accent-soft);
+  border-color: var(--accent-ring);
+  color: var(--accent-color);
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* QR Code Container & Spotlight */
+.qr-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.qr-frame {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  width: 210px;
+  height: 210px;
+  display: grid;
+  place-items: center;
+}
+
+.qr-frame svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spotlight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.spotlight-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.spotlight-row:hover {
+  border-color: var(--accent-color);
+  background-color: var(--accent-soft);
+}
+
+@media (max-width: 1080px) {
+  .grid-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-2,
+  .grid-3,
+  .choice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-kpis,
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+  .icon-preset-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

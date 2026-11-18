@@ -1,0 +1,12 @@
+node_modules/
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/media/*
+data/backups/*
+data/test-*.db*
+.env
+.DS_Store
+Thumbs.db
+*.xlsx
+*.xls

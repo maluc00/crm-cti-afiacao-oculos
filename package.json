@@ -1,0 +1,22 @@
+{
+  "name": "cti-pro-crm",
+  "version": "1.0.0",
+  "description": "CTI Pro CRM - Plataforma ERP/CRM e BI Local-First para Oficina de Precisao Optica e Cutelaria",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/phase1.test.js tests/phase2.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^11.8.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="warm-atelier" data-focus="false">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CTI Pro CRM - Oficina de Precisao</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/design-tokens.css">
+  <link rel="stylesheet" href="/css/shell.css">
+  <link rel="stylesheet" href="/css/views.css">
+  <link rel="stylesheet" href="/css/phase2.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Desktop -->
+    <aside class="sidebar" aria-label="Navegacao principal">
+      <div class="brand-box">
+        <div class="brand-mark" id="sidebar-brand-icon"></div>
+        <div class="brand-meta">
+          <div class="brand-name" id="sidebar-brand-name">CTI Pro Oficina</div>
+          <div class="brand-slogan" id="sidebar-brand-slogan">Precisao Optica &amp; Cutelaria</div>
+        </div>
+      </div>
+
+      <nav class="nav-group">
+        <div class="nav-section-label eyebrow">Operacao</div>
+        <button class="nav-item" type="button" data-route="atendimento">
+          <span class="nav-item-main">
+            <span class="icon" data-icon="clipboard"></span>
+            <span>Atendimento &amp; OS</span>
+          </span>
+          <span class="kbd">F2</span>
+        </button>
+        <button class="nav-item" type="button" data-route="bancada">
+          <span class="nav-item-main">
+            <span class="icon" data-icon="wrench"></span>
+            <span>Bancada Tecnica</span>
+          </span>
+        </button>
+        <button class="nav-item" type="button" data-route="clientes">
+          <span class="nav-item-main">
+            <span class="icon" data-icon="users"></span>
+            <span>Clientes &amp; CRM</span>
+          </span>
+        </button>
+        <button class="nav-item" type="button" data-route="estoque">
+          <span class="nav-item-main">
+            <span class="icon" data-icon="layers"></span>
+            <span>Catalogo &amp; Estoque</span>
+          </span>
+        </button>
+
+        <div class="nav-section-label eyebrow">Financeiro &amp; Gestao</div>
+        <button class="nav-item" type="button" data-route="caixa">
+          <span class="nav-item-main">
+            <span class="icon" data-icon="wallet"></span>
+            <span>Caixa &amp; Ledger</span>
+          </span>
+          <span class="kbd">F4</span>
+        </button>
+        <button class="nav-item" type="button" data-route="bi">
+          <span class="nav-item-main">
+            <span class="icon" data-icon="chart"></span>
+            <span>BI &amp; Indicadores</span>
+          </span>
+        </button>
+        <button class="nav-item" type="button" data-route="configuracoes">
+          <span class="nav-item-main">
+            <span class="icon" data-icon="sliders"></span>
+            <span>Ajustes White-Label</span>
+          </span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sync-pill">
+          <span class="sync-pill-left">
+            <span class="led led-green" id="sync-led"></span>
+            <span id="sync-status-label">LAN Sincronizado</span>
+          </span>
+          <span class="mono" id="sync-clients-count">1</span>
+        </div>
+        <button class="btn btn-sm" type="button" id="sidebar-qr-btn">
+          <span class="icon" data-icon="qrcode"></span>
+          <span>Conectar Celular (LAN)</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Coluna Principal -->
+    <div class="main-column">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="mobile-brand-chip">
+            <span class="brand-mark" id="mobile-brand-icon" style="width:28px;height:28px;"></span>
+            <span id="mobile-brand-name">CTI Pro</span>
+          </div>
+
+          <button class="spotlight-trigger" type="button" id="btn-spotlight" title="Busca rapida (Ctrl+K)">
+            <span class="spotlight-trigger-left">
+              <span class="icon" data-icon="search"></span>
+              <span class="spotlight-trigger-text">Spotlight de comandos...</span>
+            </span>
+            <span class="kbd spotlight-kbd">Ctrl+K</span>
+          </button>
+
+          <div id="domain-switcher-wrap"></div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="cash-semaphore" type="button" id="btn-cash-semaphore" title="Estado do Caixa Diario">
+            <span class="led led-amber" id="cash-led"></span>
+            <span id="cash-status-text">Caixa Fechado</span>
+          </button>
+
+          <button class="btn" type="button" id="btn-theme-toggle" title="Alternar tema Claro/Escuro">
+            <span class="icon" id="theme-toggle-icon" data-icon="moon"></span>
+            <span class="btn-label-desktop" id="theme-toggle-label">Titanium</span>
+          </button>
+
+          <button class="btn" type="button" id="btn-focus-toggle" title="Modo Foco Universal (F8)">
+            <span class="icon" data-icon="eye"></span>
+            <span class="btn-label-desktop">Foco</span>
+            <span class="kbd btn-label-desktop">F8</span>
+          </button>
+
+          <button class="btn btn-accent" type="button" id="btn-lan-qr" title="QR Code de acesso mobile via Wi-Fi">
+            <span class="icon" data-icon="smartphone"></span>
+            <span class="btn-label-desktop">Celular LAN</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="viewport" id="app-viewport">
+        <section class="card panel">
+          <div class="eyebrow">Inicializando</div>
+          <h1 class="page-title">Carregando base local...</h1>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- HUD de Teclado no Rodape (F9) -->
+  <footer class="keyboard-hud" id="keyboard-hud">
+    <div class="hud-items">
+      <button class="btn-ghost hud-item" type="button" data-hud-action="spotlight">
+        <span class="kbd">Ctrl+K</span><span>Spotlight</span>
+      </button>
+      <button class="btn-ghost hud-item" type="button" data-hud-action="route:atendimento">
+        <span class="kbd">F2</span><span>Atendimento</span>
+      </button>
+      <button class="btn-ghost hud-item" type="button" data-hud-action="route:caixa">
+        <span class="kbd">F4</span><span>Caixa</span>
+      </button>
+      <button class="btn-ghost hud-item" type="button" data-hud-action="qr">
+        <span class="kbd">F7</span><span>QR Mobile</span>
+      </button>
+      <button class="btn-ghost hud-item" type="button" data-hud-action="focus">
+        <span class="kbd">F8</span><span>Modo Foco</span>
+      </button>
+      <button class="btn-ghost hud-item" type="button" data-hud-action="hud">
+        <span class="kbd">F9</span><span>Ocultar HUD</span>
+      </button>
+    </div>
+    <div class="mono" id="hud-mode-readout">HYBRID | SOLO</div>
+  </footer>
+
+  <!-- Bottom Nav Mobile -->
+  <nav class="mobile-bottom-nav" aria-label="Navegacao mobile">
+    <button class="mobile-nav-btn" type="button" data-route="atendimento">
+      <span class="icon" data-icon="clipboard"></span>
+      <span>Balcao</span>
+    </button>
+    <button class="mobile-nav-btn" type="button" data-route="bancada">
+      <span class="icon" data-icon="wrench"></span>
+      <span>Bancada</span>
+    </button>
+    <button class="mobile-nav-btn" type="button" data-route="clientes">
+      <span class="icon" data-icon="users"></span>
+      <span>Clientes</span>
+    </button>
+    <button class="mobile-nav-btn" type="button" data-route="caixa">
+      <span class="icon" data-icon="wallet"></span>
+      <span>Caixa</span>
+    </button>
+    <button class="mobile-nav-btn" type="button" data-route="configuracoes">
+      <span class="icon" data-icon="sliders"></span>
+      <span>Ajustes</span>
+    </button>
+  </nav>
+
+  <!-- Modal Generico (QR LAN / Spotlight / Caixa) -->
+  <div class="modal-backdrop hidden" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-panel" id="modal-panel">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Modal</h2>
+        <button class="btn btn-sm btn-ghost" type="button" id="modal-close" aria-label="Fechar janela">
+          <span class="icon" data-icon="close"></span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Gate de PIN Opcional na Rede LAN -->
+  <div class="modal-backdrop hidden" id="pin-gate-backdrop" role="dialog" aria-modal="true" aria-labelledby="pin-gate-title">
+    <div class="modal-panel" style="max-width:400px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="pin-gate-title">Verificacao PIN da Oficina</h2>
+      </div>
+      <div class="modal-body">
+        <p class="page-subtitle" style="margin-bottom:14px;">
+          O acesso mobile via Wi-Fi esta protegido por PIN. Digite o codigo exibido na tela do balcao.
+        </p>
+        <form id="pin-gate-form" class="field" style="gap:10px;">
+          <input class="input mono" id="pin-gate-input" type="password" inputmode="numeric" maxlength="6" placeholder="Codigo PIN (4 a 6 digitos)" required>
+          <div id="pin-gate-error" class="eyebrow" style="color:var(--status-danger);"></div>
+          <button class="btn btn-accent" type="submit">Desbloquear Terminal Mobile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+  <script src="/js/icons.js"></script>
+  <script src="/js/state-sync.js"></script>
+  <script src="/js/spotlight-select.js"></script>
+  <script src="/js/modals.js"></script>
+  <script src="/js/modals-catalog.js"></script>
+  <script src="/js/modals-catalog-stock.js"></script>
+  <script src="/js/modals-clients.js"></script>
+  <script src="/js/view-settings.js"></script>
+  <script src="/js/view-catalog.js"></script>
+  <script src="/js/view-clients.js"></script>
+  <script src="/js/views-shell.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+/* ==========================================================================
+   CTI PRO CRM - APP SHELL RESPONSIVO (DESKTOP + MOBILE)
+   Sidebar Fixa | Topbar Operacional | Bottom Nav Mobile | Modais & HUD F9
+   ========================================================================== */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar Desktop */
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background-color: var(--bg-card);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 20;
+  transition: background-color var(--duration-spring) var(--ease-spring),
+              border-color var(--duration-spring) var(--ease-spring);
+}
+
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 14px;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background-color: var(--accent-soft);
+  border: 1px solid var(--accent-ring);
+  color: var(--accent-color);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: var(--bezel-inset);
+}
+
+.brand-mark svg {
+  width: 21px;
+  height: 21px;
+}
+
+.brand-meta {
+  min-width: 0;
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-slogan {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-section-label {
+  padding: 8px 10px 4px;
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--duration-spring) var(--ease-spring),
+              background-color var(--duration-fast) ease,
+              color var(--duration-fast) ease,
+              border-color var(--duration-fast) ease;
+}
+
+.nav-item-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.nav-item:hover {
+  background-color: var(--bg-muted);
+  color: var(--text-primary);
+}
+
+.nav-item:active {
+  transform: scale(0.97);
+}
+
+.nav-item.is-active {
+  background-color: var(--accent-soft);
+  border-color: var(--accent-ring);
+  color: var(--accent-color);
+}
+
+.sidebar-footer {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sync-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-muted);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.sync-pill-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Coluna Principal */
+.main-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+  height: var(--topbar-height);
+  padding: 0 22px;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  transition: background-color var(--duration-spring) var(--ease-spring);
+}
+
+.topbar-left,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mobile-brand-chip {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.spotlight-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  height: 36px;
+  min-width: 220px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) ease, transform var(--duration-spring) var(--ease-spring);
+}
+
+.spotlight-trigger:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.spotlight-trigger:active {
+  transform: scale(0.97);
+}
+
+.spotlight-trigger-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Seletor Camaleao Hibrido na Topbar */
+.domain-switcher {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-muted);
+  gap: 2px;
+}
+
+.domain-pill {
+  border: none;
+  background: transparent;
+  padding: 5px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) ease;
+}
+
+.domain-pill.is-active {
+  background-color: var(--bg-card);
+  color: var(--accent-color);
+  box-shadow: var(--bezel-inset), 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.domain-badge-static {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background-color: var(--accent-soft);
+  border: 1px solid var(--accent-ring);
+  color: var(--accent-color);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cash-semaphore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-elevated);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--duration-spring) var(--ease-spring), border-color var(--duration-fast) ease;
+}
+
+.cash-semaphore:hover {
+  border-color: var(--border-strong);
+}
+
+.cash-semaphore:active {
+  transform: scale(0.97);
+}
+
+.viewport {
+  flex: 1;
+  padding: 22px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 64px;
+}
+
+/* HUD de Teclado F9 */
+.keyboard-hud {
+  position: fixed;
+  left: var(--sidebar-width);
+  right: 0;
+  bottom: 0;
+  height: var(--hud-height);
+  padding: 0 22px;
+  background-color: var(--bg-card);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  z-index: 14;
+}
+
+.hud-items {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow-x: auto;
+}
+
+.hud-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+/* Bottom Nav Mobile */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62px;
+  background-color: var(--bg-card);
+  border-top: 1px solid var(--border-subtle);
+  padding: 4px 6px;
+  z-index: 25;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.mobile-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.mobile-nav-btn.is-active {
+  color: var(--accent-color);
+  background-color: var(--accent-soft);
+}
+
+/* Modais */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--backdrop-rgba);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 60;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 540px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--bezel-inset), var(--shadow-modal);
+  overflow: hidden;
+  animation: modalSpring var(--duration-spring) var(--ease-spring);
+}
+
+.modal-panel.modal-lg {
+  max-width: 660px;
+}
+
+@keyframes modalSpring {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.modal-body {
+  padding: 18px 20px;
+  max-height: 76vh;
+  overflow-y: auto;
+}
+
+/* Toasts */
+.toast-stack {
+  position: fixed;
+  top: 74px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 80;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  min-width: 240px;
+  max-width: 380px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--bezel-inset), var(--shadow-card);
+  font-size: 12px;
+  font-weight: 600;
+  animation: modalSpring var(--duration-spring) var(--ease-spring);
+}
+
+@media (max-width: 900px) {
+  .sidebar,
+  .keyboard-hud,
+  .btn-label-desktop,
+  .spotlight-kbd {
+    display: none !important;
+  }
+
+  .mobile-brand-chip {
+    display: inline-flex;
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+  }
+
+  .topbar {
+    padding: 0 12px;
+  }
+
+  .spotlight-trigger {
+    min-width: 40px;
+    padding: 0 10px;
+  }
+
+  .spotlight-trigger-text {
+    display: none;
+  }
+
+  .viewport {
+    padding: 14px 12px 84px;
+  }
+}
